@@ -4,7 +4,12 @@
  * I would not be in charge of your use of this software
  *  (c) guigur.com 2015
  */
- 
+
+ /*
+  * TODO:
+  * changer les pins 6 & 7 de l'encoder pour les pins 2 & 3  et vice versa -> interrupts
+  */
+  
 #include <Wire.h>
 #include <PN532_I2C.h>
 #include <PN532.h>
@@ -16,15 +21,15 @@ PN532 nfc(pn532_i2c);
 
 LiquidCrystal lcd(8, 13, 12, 11, 10, 9);
 
-Encoder myEnc(6, 5); // a changer pour 2 et 3 -> interrupts
+Encoder myEnc(2, 3);
 
-uint8_t readLedPin = 2;
-uint8_t writeLedPin = 3;
-uint8_t encButton = 7;
+uint8_t readLedPin = 7; //rouge
+uint8_t writeLedPin = 6; //vert
+uint8_t encButton = 5;
 long oldPosition  = -999;
 bool buzy = false;
 
-byte KeyA_List[][6] =
+byte KeyA_List_D3[][6] =
 {
   { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },  // Sector 0
   { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },  // Sector 1
@@ -75,7 +80,7 @@ void setup(void)
 
   lcd.setCursor(0,1);
   lcd.print("NFC OK");
- // delay(1000);
+  delay(1000);
   }
 
 void menu()
@@ -83,8 +88,9 @@ void menu()
   lcd.clear();
   lcd.print("Menu");
   lcd.setCursor(0,1);
+  lcd.print(oldPosition / 4);
   encoder();
-  delay(10);
+  delay(50);
   if (!digitalRead(encButton))
    {
     Serial.println("BOUTON !");
@@ -99,7 +105,7 @@ void encoder()
   if (newPosition != oldPosition)
   {
     oldPosition = newPosition;
-    Serial.println(newPosition / 2);
+    Serial.println(newPosition / 4);
   }
 }
 
@@ -127,8 +133,11 @@ void nfc_read()
   int currentBalance = 0;
 
   digitalWrite(readLedPin, HIGH);
+  lcd.clear();
+  lcd.print("READING ...");
+  lcd.setCursor(0,1);
+  lcd.print("Scan your card");
   
-    
   success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
 
   if (success) {
@@ -160,21 +169,21 @@ void nfc_read()
         {
           // Starting of a new sector ... try to to authenticate
           Serial.print("------------------------Sector ");Serial.print(currentblock/4, DEC);Serial.println("-------------------------");
-           Serial.print("key used:");
-              Serial.print(KeyA_List[currentblock/4][0], HEX);
-              Serial.print(KeyA_List[currentblock/4][1], HEX);
-              Serial.print(KeyA_List[currentblock/4][2], HEX);
-              Serial.print(KeyA_List[currentblock/4][3], HEX);
-              Serial.print(KeyA_List[currentblock/4][4], HEX);
-              Serial.println(KeyA_List[currentblock/4][5], HEX);
+           Serial.print("keys used:");
+           for (uint8_t i = 0; i < 5; i++)
+           {
+            Serial.print(" ");Serial.print(KeyA_List_D3[currentblock/4][i], HEX);
+           }
+           Serial.println("");
+           
           if (currentblock == 0)
           {
-              success = nfc.mifareclassic_AuthenticateBlock (uid, uidLength, currentblock, 1, KeyA_List[0]);
+              success = nfc.mifareclassic_AuthenticateBlock (uid, uidLength, currentblock, 1, KeyA_List_D3[0]);
               buzy = true;
           }
           else
           {
-              success = nfc.mifareclassic_AuthenticateBlock (uid, uidLength, currentblock, 1, KeyA_List[currentblock/4]);
+              success = nfc.mifareclassic_AuthenticateBlock (uid, uidLength, currentblock, 1, KeyA_List_D3[currentblock/4]);
           }
           if (success)
           {
@@ -183,6 +192,8 @@ void nfc_read()
           else
           {
             Serial.println("Authentication error");
+            lcd.clear();
+            lcd.print("key error");
           }
         }
         // If we're still not authenticated just skip the block
