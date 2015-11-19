@@ -16,6 +16,8 @@
 #include <LiquidCrystal.h>
 #include <Encoder.h>
 
+#define MENUELEMENTS 2
+
 PN532_I2C pn532_i2c(Wire);
 PN532 nfc(pn532_i2c);
 
@@ -26,8 +28,11 @@ Encoder myEnc(2, 3);
 uint8_t readLedPin = 7; //rouge
 uint8_t writeLedPin = 6; //vert
 uint8_t encButton = 5;
-long oldPosition  = -999;
-bool buzy = false;
+long oldPosition  = 0;
+long cursorPosition  = 0;
+
+
+int cycleMenu = 0;
 
 byte KeyA_List_D3[][6] =
 {
@@ -47,6 +52,12 @@ byte KeyA_List_D3[][6] =
   { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },  // Sector 13
   { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },  // Sector 14
   { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },  // Sector 15
+};
+
+String menuStrings[][2] =
+{
+  {{"1. read card"},{"read the balance"}},
+  {{"2. add credits"},{"write new balance"}},
 };
 
 void setup(void)
@@ -77,48 +88,60 @@ void setup(void)
   Serial.print('.'); Serial.println((versiondata>>8) & 0xFF, DEC);
 
   nfc.SAMConfig(); // configure board to read RFID tags
-
+  
   lcd.setCursor(0,1);
   lcd.print("NFC OK");
-  delay(1000);
+  //delay(1000);
+  lcd.clear();
   }
 
-void menu()
-{
-  lcd.clear();
-  lcd.print("Menu");
-  lcd.setCursor(0,1);
-  lcd.print(oldPosition / 4);
-  encoder();
-  delay(50);
-  if (!digitalRead(encButton))
-   {
-    Serial.println("BOUTON !");
-    buzy = true;
-   }
-    //lcd.print("Waiting card");
-}
+
 
 void encoder()
 {
-  long newPosition = myEnc.read();
-  if (newPosition != oldPosition)
+  int newPosition = myEnc.read();
+  if ((newPosition != oldPosition) )
   {
+    
+     
     oldPosition = newPosition;
+    if(oldPosition < 0)
+    {
+       myEnc.write(255);
+    }
+    if(oldPosition > 255)
+    {
+       myEnc.write(0);
+    }
     Serial.println(newPosition / 4);
+    cycleMenu = (abs(newPosition) / 4) / MENUELEMENTS;
+    lcd.clear();
   }
 }
 
 void loop(void)
 {
- if (buzy == true)
- {
-  nfc_read();
- }
- else
- {
-  menu();
- }
+ byte relativePosition = (abs(oldPosition) / 4) - (cycleMenu * MENUELEMENTS);
+  lcd.setCursor(0,0);
+  
+    
+  lcd.print(menuStrings[relativePosition][0]);
+  lcd.setCursor(0,1);
+  lcd.print(menuStrings[relativePosition][1]);
+  encoder();
+  
+  if (!digitalRead(encButton))
+   {
+    Serial.println("BOUTON !");
+    if (relativePosition == 0)
+      nfc_read();
+    else if (relativePosition == 1)
+    {
+      lcd.clear();
+      lcd.print(" not finished");
+      delay(1000);
+    }
+   }
 }
 
 void nfc_read()
@@ -179,7 +202,7 @@ void nfc_read()
           if (currentblock == 0)
           {
               success = nfc.mifareclassic_AuthenticateBlock (uid, uidLength, currentblock, 1, KeyA_List_D3[0]);
-              buzy = true;
+              
           }
           else
           {
@@ -220,7 +243,7 @@ void nfc_read()
             }
             // Dump the raw data
             nfc.PrintHexChar(data, 16);
-            buzy = false;
+            
             if (currentblock == 24)
             {
               currentBalance = (data[6] * 256) + data[7];
@@ -231,7 +254,7 @@ void nfc_read()
             // Oops ... something happened
             Serial.print("Block ");Serial.print(currentblock, DEC);
             Serial.println(" unable to read this block");
-            buzy = false;
+            
           }
         }
       }
@@ -253,7 +276,10 @@ void nfc_read()
   Serial.println("\n\nDONE ! waiting 4 the button");
   digitalWrite(readLedPin, LOW);
   wait4button();
-  buzy = false;
+  lcd.clear();
+  Serial.print("end read = ");Serial.println(oldPosition);
+  
+  
   Serial.flush();
 }
 
