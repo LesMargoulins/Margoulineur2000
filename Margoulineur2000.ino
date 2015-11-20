@@ -166,8 +166,10 @@ int encoderWrite()
         else
          {
           lcd.clear();
-          lcd.print("New Balance :");
+          lcd.print("New balance :");
+          lcd.setCursor(0,1);
           lcd.print(newPosition / 4);
+          
           oldPosition = newPosition;
           Serial.println(newPosition / 4);  
          } 
@@ -186,16 +188,14 @@ void nfc_write()
   uint8_t currentblock;                     // Counter to keep track of which block we're on
   bool authenticated = false;               // Flag to indicate if the sector is authenticated
   uint8_t data[16] = {0x04, 0x0A, 0x52, 0x18, 0x7B, 0x2C, 0x10, 0x68, 0x00, 0x00, 0x00, 0x00, 0x00, 0x45, 0x55, 0x43};                         // Array to store block data during reads
-  uint8_t savedData[16];      
-  int currentBalance = 0;
+  uint8_t savedData[16];
 
-  int value = encoderWrite() * 100;
+  int newBalance = encoderWrite() * 100;
   
-  
-  Serial.print("New value = ");Serial.println(value);
+  Serial.print("New value = ");Serial.println(newBalance);
   uint8_t balance[] = {0, 0};
-  balance[0] = value / 256;
-  balance[1] = value - (balance[0] * 256);
+  balance[0] = newBalance / 256;
+  balance[1] = newBalance - (balance[0] * 256);
   Serial.print("Hex 1 = ");Serial.println(balance[0], HEX);
   Serial.print("Hex 2 = ");Serial.println(balance[1], HEX);
   digitalWrite(writeLedPin, HIGH);
@@ -206,8 +206,8 @@ void nfc_write()
   
   success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
 
-  if (success) {
-    // Display some basic information about the card
+  if (success)
+  {
     Serial.println("Found an ISO14443A card");
     lcd.clear();
     lcd.print("I Found a card !");
@@ -267,8 +267,32 @@ void nfc_write()
         }
         else
         {
-          if (currentblock == 24)
+          if (currentblock == 24 || currentblock == 26 )
           {
+           nfc.mifareclassic_ReadDataBlock(currentblock, data); 
+           data[6] = balance[0];
+           data[7] = balance[1];
+            success = nfc.mifareclassic_WriteDataBlock(currentblock, data);
+            if (success)
+            {
+              Serial.print("Block ");Serial.print(currentblock, DEC);
+              if (currentblock < 10)
+              {
+                Serial.print("  ");
+              }
+              else
+              {
+                Serial.print(" ");
+              }
+              nfc.PrintHexChar(data, 16);
+              
+            }
+          }
+          else if (currentblock == 25)
+          {
+           nfc.mifareclassic_ReadDataBlock(currentblock, data); 
+           data[5] = balance[0];
+           data[6] = balance[1];
             success = nfc.mifareclassic_WriteDataBlock(currentblock, data);
             if (success)
             {
@@ -300,15 +324,12 @@ void nfc_write()
       Serial.println("Ooops ... this doesn't seem to be a Mifare Classic card!");
     }
   }
-  // Wait a bit before trying again
-//  Serial.println(savedData[0], HEX);
- // Serial.println(savedData[1], HEX);
-  
+
   lcd.clear();
-  lcd.print("Balance :");
+  lcd.print("New balance :");
   lcd.setCursor(0,1);
-  lcd.print(currentBalance);
-  Serial.println(currentBalance, DEC);
+  lcd.print(newBalance / 100);
+  Serial.println(newBalance, DEC);
   Serial.println("\n\nDONE ! waiting 4 the button");
   digitalWrite(writeLedPin, LOW);
   wait4button();
@@ -439,21 +460,16 @@ void nfc_read()
       Serial.println("Ooops ... this doesn't seem to be a Mifare Classic card!");
     }
   }
-  // Wait a bit before trying again
-//  Serial.println(savedData[0], HEX);
- // Serial.println(savedData[1], HEX);
-  
   lcd.clear();
   lcd.print("Balance :");
   lcd.setCursor(0,1);
-  lcd.print(currentBalance);
+  lcd.print(currentBalance / 100);
   Serial.println(currentBalance, DEC);
   Serial.println("\n\nDONE ! waiting 4 the button");
   digitalWrite(readLedPin, LOW);
   wait4button();
   lcd.clear();
   Serial.print("end read = ");Serial.println(oldPosition);
-  
   
   Serial.flush();
 }
