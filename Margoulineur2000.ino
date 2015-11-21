@@ -19,7 +19,7 @@
 #define MENUELEMENTS 2
 
 #define VALMIN 0
-#define VALMAX 40
+#define VALMAX 99999
 
 PN532_I2C pn532_i2c(Wire);
 PN532 nfc(pn532_i2c);
