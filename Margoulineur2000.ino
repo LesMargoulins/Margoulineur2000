@@ -7,7 +7,8 @@
 
  /*
   * TODO:
-  * 
+  * Read function for the D4
+  * Write function for the D4
   */
   
 #include <Wire.h>
@@ -16,10 +17,10 @@
 #include <LiquidCrystal.h>
 #include <Encoder.h>
 
-#define MENUELEMENTS 2
+#define MENUELEMENTS 4 //number of elements in the menu
 
-#define VALMIN 0
-#define VALMAX 99999
+#define VALMIN 0 //min value of the new balance in the write sequence.
+#define VALMAX 99999 //maw value of the new balance in the write sequence 
 
 PN532_I2C pn532_i2c(Wire);
 PN532 nfc(pn532_i2c);
@@ -30,10 +31,11 @@ Encoder myEnc(2, 3);
 
 uint8_t readLedPin = 7; //rouge
 uint8_t writeLedPin = 6; //vert
+
 uint8_t encButton = 5;
+
 long oldPosition  = 0;
 long cursorPosition  = 0;
-
 
 int cycleMenu = 0;
 
@@ -57,10 +59,14 @@ byte KeyA_List_D3[][6] =
   { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },  // Sector 15
 };
 
+byte KeyB_Buffer[6] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
+
 String menuStrings[][2] =
 {
-  {{"1. read card"},{"read the balance"}},
-  {{"2. add credits"},{"write new balance"}},
+  {{"1. read D3"},{"read the balance of the dormitory 3"}},
+  {{"2. write D3"},{"write new balance of the dormitory 3"}},
+  {{"3. read D4"},{"read the balance of the dormitory 4"}},
+  {{"4. write D4"},{"write new balance of the dormitory 4"}},  
 };
 
 void setup(void)
@@ -98,8 +104,6 @@ void setup(void)
   lcd.clear();
   }
 
-
-
 void encoderMenu()
 {
   int newPosition = myEnc.read();
@@ -131,17 +135,24 @@ void loop(void)
   if (!digitalRead(encButton))
    {
     Serial.println("BOUTON !");
-    if (relativePosition == 0)
-      nfc_read();
-    else if (relativePosition == 1)
+    switch (relativePosition)
     {
-      lcd.clear();
-      nfc_write();
+      case 0:
+        nfc_read();
+        break;
+      case 1:
+        lcd.clear();
+        nfc_write();
+        break;
+      case 2:
+      break;
+      case 3:
+      break;
     }
    }
 }
 
-int encoderWrite()
+int encoderWrite(byte dormitory)
 {
   int newPosition;
   myEnc.write(0);
@@ -187,17 +198,20 @@ void nfc_write()
   uint8_t uidLength;                        // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
   uint8_t currentblock;                     // Counter to keep track of which block we're on
   bool authenticated = false;               // Flag to indicate if the sector is authenticated
-  uint8_t data[16] = {0x04, 0x0A, 0x52, 0x18, 0x7B, 0x2C, 0x10, 0x68, 0x00, 0x00, 0x00, 0x00, 0x00, 0x45, 0x55, 0x43};                         // Array to store block data during reads
-  uint8_t savedData[16];
+  uint8_t data[16]; // = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};                         // Array to store block data during reads
+/**/
 
-  int newBalance = encoderWrite() * 100;
-  
+  int newBalance = encoderWrite(3) * 100;
   Serial.print("New value = ");Serial.println(newBalance);
   uint8_t balance[] = {0, 0};
   balance[0] = newBalance / 256;
   balance[1] = newBalance - (balance[0] * 256);
   Serial.print("Hex 1 = ");Serial.println(balance[0], HEX);
   Serial.print("Hex 2 = ");Serial.println(balance[1], HEX);
+
+
+/**/
+  
   digitalWrite(writeLedPin, HIGH);
   lcd.clear();
   lcd.print("WRITING ...");
@@ -348,7 +362,7 @@ void nfc_read()
   uint8_t currentblock;                     // Counter to keep track of which block we're on
   bool authenticated = false;               // Flag to indicate if the sector is authenticated
   uint8_t data[16];                         // Array to store block data during reads
-  uint8_t savedData[16];      
+  
   int currentBalance = 0;
 
   digitalWrite(readLedPin, HIGH);
@@ -481,5 +495,3 @@ void wait4button()
   }
   delay(500);
 }
-
-
