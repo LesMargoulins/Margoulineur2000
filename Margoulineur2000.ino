@@ -19,6 +19,7 @@
 
 #define MENUELEMENTS 4 //number of elements in the menu
 
+#define ENCODERSTEPS 2
 #define VALMIN 0 //min value of the new balance in the write sequence.
 #define VALMAX 99999 //maw value of the new balance in the write sequence 
 
@@ -118,15 +119,15 @@ void encoderMenu()
     {
        myEnc.write(0);
     }
-    Serial.println(newPosition / 4);
-    cycleMenu = (abs(newPosition) / 4) / MENUELEMENTS;
+    Serial.println(newPosition / ENCODERSTEPS);
+    cycleMenu = (abs(newPosition) / ENCODERSTEPS) / MENUELEMENTS;
     lcd.clear();
   }
 }
 
 void loop(void)
 {
- byte relativePosition = (abs(oldPosition) / 4) - (cycleMenu * MENUELEMENTS);
+ byte relativePosition = (abs(oldPosition) / ENCODERSTEPS) - (cycleMenu * MENUELEMENTS);
   lcd.setCursor(0,0);
   lcd.print(menuStrings[relativePosition][0]);
   lcd.setCursor(0,1);
@@ -164,14 +165,14 @@ int encoderWrite(byte dormitory)
     newPosition = myEnc.read();
     if ((newPosition != oldPosition) )
     {
-      if (newPosition < VALMIN * 4)
+      if (newPosition < VALMIN * ENCODERSTEPS)
         {
-          myEnc.write(VALMIN * 4);
+          myEnc.write(VALMIN * ENCODERSTEPS);
           newPosition = 0;
         }
-        else if (newPosition > VALMAX * 4)
+        else if (newPosition > VALMAX * ENCODERSTEPS)
         {
-          myEnc.write(VALMAX * 4);
+          myEnc.write(VALMAX * ENCODERSTEPS);
           newPosition = 40; 
         }
         else
@@ -179,16 +180,16 @@ int encoderWrite(byte dormitory)
           lcd.clear();
           lcd.print("New balance :");
           lcd.setCursor(0,1);
-          lcd.print(newPosition / 4);
+          lcd.print(newPosition / ENCODERSTEPS);
           
           oldPosition = newPosition;
-          Serial.println(newPosition / 4);  
+          Serial.println(newPosition / ENCODERSTEPS);  
          } 
     }
   }
   myEnc.write(0);
   oldPosition = -1;
-  return (newPosition / 4);
+  return (newPosition / ENCODERSTEPS);
 }
 
 void nfc_write()
