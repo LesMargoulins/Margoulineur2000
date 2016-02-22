@@ -30,49 +30,6 @@ long cursorPosition  = 0;
 
 int cycleMenu = 0;
 
-
-byte KeyA_List_D3[][6] =
-{
-  { 0xFF, 0xff, 0xff, 0xff, 0xff, 0xff },  // Sector 0
-  { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },  // Sector 1
-  { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },  // Sector 2
-  { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },  // Sector 3
-  { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },  // Sector 4
-  { 0xa9, 0x6c, 0xde, 0x3f, 0x27, 0x86 },  // Sector 5
-  { 0xa9, 0x6c, 0xde, 0x3f, 0x27, 0x86 },  // Sector 6
-  { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },  // Sector 7
-  { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },  // Sector 8
-  { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },  // Sector 9
-  { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },  // Sector 10
-  { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },  // Sector 11
-  { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },  // Sector 12
-  { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },  // Sector 13
-  { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },  // Sector 14
-  { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff },  // Sector 15
-};
-
-
-byte KeyA_List_D4[][6] =
-{
-
- { 0x1E, 0x14, 0x25, 0x12, 0x3D, 0x69},  // Sector 0
- { 0x1E, 0x14, 0x25, 0x12, 0x3D, 0x69},  // Sector 0
- { 0x1E, 0x14, 0x25, 0x12, 0x3D, 0x69},  // Sector 0
- { 0x1E, 0x14, 0x25, 0x12, 0x3D, 0x69},  // Sector 0
- { 0x1E, 0x14, 0x25, 0x12, 0x3D, 0x69},  // Sector 0
- { 0x1E, 0x14, 0x25, 0x12, 0x3D, 0x69},  // Sector 0
- { 0x1E, 0x14, 0x25, 0x12, 0x3D, 0x69},  // Sector 0
- { 0x1E, 0x14, 0x25, 0x12, 0x3D, 0x69},  // Sector 0
- { 0x1E, 0x14, 0x25, 0x12, 0x3D, 0x69},  // Sector 0
- { 0x1E, 0x14, 0x25, 0x12, 0x3D, 0x69},  // Sector 0
- { 0x1E, 0x14, 0x25, 0x12, 0x3D, 0x69},  // Sector 0
- { 0x1E, 0x14, 0x25, 0x12, 0x3D, 0x69},  // Sector 0
- { 0x1E, 0x14, 0x25, 0x12, 0x3D, 0x69},  // Sector 0
- { 0x1E, 0x14, 0x25, 0x12, 0x3D, 0x69},  // Sector 0
-{ 0x1E, 0x14, 0x25, 0x12, 0x3D, 0x69},  // Sector 0
-{ 0x1E, 0x14, 0x25, 0x12, 0x3D, 0x69},  // Sector 0
-};
-
 byte KeyB_Buffer[6] = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 
 String menuStrings[][2] =
@@ -80,7 +37,8 @@ String menuStrings[][2] =
   {{"1. read D3"},{"read the balance of the dormitory 3"}},
   {{"2. write D3"},{"write new balance of the dormitory 3"}},
   {{"3. read D4"},{"read the balance of the dormitory 4"}},
-  {{"4. write D4"},{"write new balance of the dormitory 4"}},  
+  {{"4. write D4"},{"write new balance of the dormitory 4"}},
+  {{"5. About"},{"by guigur & oborotev"}},
 };
 
 void setup(void)
@@ -166,6 +124,7 @@ void loop(void)
         break;
       case 3:
         lcd.clear();
+        nfc_read_write(4, true);
         break;
     }
    }
@@ -210,167 +169,6 @@ int encoderWrite()
   return (newPosition / ENCODERSTEPS);
 }
 
-void nfc_write()
-{
-  uint8_t success;                          // Flag to check if there was an error with the PN532
-  uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
-  uint8_t uidLength;                        // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
-  uint8_t currentblock;                     // Counter to keep track of which block we're on
-  bool authenticated = false;               // Flag to indicate if the sector is authenticated
-  uint8_t data[16]; // = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};                         // Array to store block data during reads
-/**/
-
-  int newBalance = encoderWrite() * 100;
-  Serial.print("New value = ");Serial.println(newBalance);
-  uint8_t balance[] = {0, 0};
-  balance[0] = newBalance / 256;
-  balance[1] = newBalance - (balance[0] * 256);
-  Serial.print("Hex 1 = ");Serial.println(balance[0], HEX);
-  Serial.print("Hex 2 = ");Serial.println(balance[1], HEX);
-
-
-/**/
-  
-  digitalWrite(writeLedPin, HIGH);
-  lcd.clear();
-  lcd.print("WRITING ...");
-  lcd.setCursor(0,1);
-  lcd.print("Scan your card");
-  
-  success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
-
-  if (success)
-  {
-    Serial.println("Found an ISO14443A card");
-    lcd.clear();
-    lcd.print("I Found a card !");
-    Serial.print("  UID Length: ");Serial.print(uidLength, DEC);Serial.println(" bytes");
-    Serial.print("  UID Value: ");
-    for (uint8_t i = 0; i < uidLength; i++) {
-      Serial.print(uid[i], HEX);
-      Serial.print(' ');
-    }
-    Serial.println("");
-
-    if (uidLength == 4)
-    {
-      Serial.println("Seems to be a Mifare Classic card (4 byte UID)");
-
-      // Now we try to go through all 16 sectors (each having 4 blocks)
-      // authenticating each sector, and then dumping the blocks
-      for (currentblock = 0; currentblock < 64; currentblock++)
-      {
-        // Check if this is a new block so that we can reauthenticate
-        if (nfc.mifareclassic_IsFirstBlock(currentblock)) authenticated = false;
-
-        // If the sector hasn't been authenticated, do so first
-        if (!authenticated)
-        {
-          // Starting of a new sector ... try to to authenticate
-          Serial.print("------------------------Sector ");Serial.print(currentblock/4, DEC);Serial.println("-------------------------");
-           Serial.print("keys used:");
-           for (uint8_t i = 0; i < 5; i++)
-           {
-            Serial.print(" ");Serial.print(KeyA_List_D3[currentblock/4][i], HEX);
-           }
-           Serial.println("");
-           
-          if (currentblock == 0)
-          {
-              success = nfc.mifareclassic_AuthenticateBlock (uid, uidLength, currentblock, 1, KeyA_List_D3[0]);     
-          }
-          else
-          {
-              success = nfc.mifareclassic_AuthenticateBlock (uid, uidLength, currentblock, 1, KeyA_List_D3[currentblock/4]);
-          }
-          if (success)
-            authenticated = true;
-          else
-          {
-            Serial.println("Authentication error");
-            lcd.clear();
-            lcd.print("key error");
-          }
-        }
-        if (!authenticated)
-        {
-          Serial.print("Block ");Serial.print(currentblock, DEC);Serial.println(" unable to authenticate");
-        }
-        else
-        {
-          if (currentblock == 24 || currentblock == 26 )
-          {
-           nfc.mifareclassic_ReadDataBlock(currentblock, data); 
-           data[6] = balance[0];
-           data[7] = balance[1];
-            success = nfc.mifareclassic_WriteDataBlock(currentblock, data);
-            if (success)
-            {
-              Serial.print("Block ");Serial.print(currentblock, DEC);
-              if (currentblock < 10)
-              {
-                Serial.print("  ");
-              }
-              else
-              {
-                Serial.print(" ");
-              }
-              nfc.PrintHexChar(data, 16);
-              
-            }
-          }
-          else if (currentblock == 25)
-          {
-           nfc.mifareclassic_ReadDataBlock(currentblock, data); 
-           data[5] = balance[0];
-           data[6] = balance[1];
-            success = nfc.mifareclassic_WriteDataBlock(currentblock, data);
-            if (success)
-            {
-              Serial.print("Block ");Serial.print(currentblock, DEC);
-              if (currentblock < 10)
-              {
-                Serial.print("  ");
-              }
-              else
-              {
-                Serial.print(" ");
-              }
-              nfc.PrintHexChar(data, 16);
-              
-            }
-          }
-          else
-          {
-            // Oops ... something happened
-            Serial.print("Block ");Serial.print(currentblock, DEC);
-            Serial.println(" unable to read this block");
-            
-          }
-        }
-      }
-    }
-    else
-    {
-      Serial.println("Ooops ... this doesn't seem to be a Mifare Classic card!");
-    }
-  }
-
-  lcd.clear();
-  lcd.print("New balance :");
-  lcd.setCursor(0,1);
-  lcd.print(newBalance / 100);
-  Serial.println(newBalance, DEC);
-  Serial.println("\n\nDONE ! waiting 4 the button");
-  digitalWrite(writeLedPin, LOW);
-  wait4button();
-  lcd.clear();
-  Serial.print("end read = ");Serial.println(oldPosition);
-  
-  
-  Serial.flush();
-}
-
 void                nfc_read_write(byte dormitory, bool mode)
 {
   t_nfc_handler     nfc_handler;
@@ -409,6 +207,12 @@ void                nfc_read_write(byte dormitory, bool mode)
     if (nfc_handler.uidLength == 4)
     {
       Serial.println("Seems to be a Mifare Classic card (4 byte UID)");
+      nfc_handler.KeyA_D4[0] = nfc_handler.uid[0];
+      nfc_handler.KeyA_D4[1] = nfc_handler.uid[1];
+      nfc_handler.KeyA_D4[2] = nfc_handler.uid[2];
+      nfc_handler.KeyA_D4[3] = nfc_handler.uid[3];
+      nfc_handler.KeyA_D4[4] = nfc_handler.uid[0] ^ nfc_handler.uid[1] ^ nfc_handler.uid[2] ^ nfc_handler.uid[3];
+      nfc_handler.KeyA_D4[5] = nfc_handler.uid[0] + nfc_handler.uid[1] + nfc_handler.uid[2] + nfc_handler.uid[3];
 
       // Now we try to go through all 16 sectors (each having 4 blocks)
       // authenticating each sector, and then dumping the blocks
@@ -491,8 +295,16 @@ void                nfc_read_write(byte dormitory, bool mode)
             nfc.PrintHexChar(nfc_handler.data, 16);
             if (!mode)
             {
-                if (nfc_handler.currentblock == 24)
-                    nfc_handler.currentBalance = (nfc_handler.data[6] * 256) + nfc_handler.data[7];
+                if (dormitory == 3)
+                {
+                    if (nfc_handler.currentblock == 24)
+                        nfc_handler.currentBalance = (nfc_handler.data[6] * 256) + nfc_handler.data[7];
+                }
+                else if (dormitory == 4)
+                {
+                    if (nfc_handler.currentblock == 24)
+                        nfc_handler.currentBalance = (nfc_handler.data[0] * 256) + nfc_handler.data[1];   
+                }
             }
             else
             {

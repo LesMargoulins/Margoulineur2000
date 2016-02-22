@@ -9,7 +9,7 @@
 
 # define MENUELEMENTS 4 // Number of elements in the menu
 
-# define ENCODERSTEPS 2 //Steps for the rotary encoder, menu selection
+# define ENCODERSTEPS 4 //Steps for the rotary encoder, menu selection
 # define VALMIN 0 // Min value of the new balance in the write sequence
 # define VALMAX 40 // Max value of the new balance in the write sequence 
 
@@ -28,7 +28,7 @@ typedef struct	s_nfc_handler
 	uint8_t 	balance[2] {0}; 				  // Balance used to modify
 	byte 		KeyA_D3_part1[6] = {0xFF, 0xff, 0xff, 0xff, 0xff, 0xff}; // Key to authenticate sectors different from 5 and 6, dorm 3
 	byte 		KeyA_D3_part2[6] = {0xa9, 0x6c, 0xde, 0x3f, 0x27, 0x86}; // Key to authenticate sectors 5 and 6, dorm 3
-	byte 		KeyA_D4[6] = {0xa9, 0x6c, 0xde, 0x3f, 0x27, 0x86}; // Key used to authenticate sectors of dorm 4
+	byte 		KeyA_D4[6]; // Key used to authenticate sectors of dorm 4
 }				t_nfc_handler;
 
 # endif /* !_MARGOULINADE_H_ */
