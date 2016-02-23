@@ -386,9 +386,12 @@ void                nfc_read(byte dormitory)
     Serial.println("Found an ISO14443A card");
     lcd.clear();
     lcd.print("I Found a card !");
-    Serial.print("  UID Length: ");Serial.print(nfc_handler.uidLength, DEC);Serial.println(" bytes");
+    Serial.print("  UID Length: ");
+    Serial.print(nfc_handler.uidLength, DEC);
+    Serial.println(" bytes");
     Serial.print("  UID Value: ");
-    for (uint8_t i = 0; i < nfc_handler.uidLength; i++) {
+    for (uint8_t i = 0; i < nfc_handler.uidLength; i++)
+    {
       Serial.print(nfc_handler.uid[i], HEX);
       Serial.print(' ');
     }
@@ -403,7 +406,8 @@ void                nfc_read(byte dormitory)
       for (nfc_handler.currentblock = 0; nfc_handler.currentblock < 64; nfc_handler.currentblock++)
       {
         // Check if this is a new block so that we can reauthenticate
-        if (nfc.mifareclassic_IsFirstBlock(nfc_handler.currentblock)) nfc_handler.authenticated = false;
+        if (nfc.mifareclassic_IsFirstBlock(nfc_handler.currentblock))
+            nfc_handler.authenticated = false;
 
         // If the sector hasn't been authenticated, do so first
         if (!nfc_handler.authenticated)
@@ -414,13 +418,11 @@ void                nfc_read(byte dormitory)
            
           if (nfc_handler.currentblock >= 5 * 4 && nfc_handler.currentblock <= 6 * 4)
           {
-            for (uint8_t i = 0; i < 6; i++)
-            {
-                Serial.print(" "); dormitory == 3 ?
-                Serial.print(nfc_handler.KeyA_D3_part2[i], HEX) :
-                Serial.print(nfc_handler.KeyA_D4[i], HEX);
-            }
-              nfc_handler.success = dormitory == 3 ?
+            //Key display debug
+            dormitory == 3 ?
+                displayKeyDebug(nfc_handler.KeyA_D3_part2) :
+                displayKeyDebug(nfc_handler.KeyA_D4);
+            nfc_handler.success = dormitory == 3 ?
               nfc.mifareclassic_AuthenticateBlock (nfc_handler.uid,
                 nfc_handler.uidLength,
                 nfc_handler.currentblock,
@@ -435,13 +437,11 @@ void                nfc_read(byte dormitory)
           }
           else
           {
-            for (uint8_t i = 0; i < 6; i++)
-            {
-                Serial.print(" "); dormitory == 3 ?
-                Serial.print(nfc_handler.KeyA_D3_part1[i], HEX) :
-                Serial.print(nfc_handler.KeyA_D4[i], HEX);
-            }
-              nfc_handler.success = dormitory == 3 ?
+            //Key display debug
+            dormitory == 3 ?
+                displayKeyDebug(nfc_handler.KeyA_D3_part1) :
+                displayKeyDebug(nfc_handler.KeyA_D4);
+            nfc_handler.success = dormitory == 3 ?
               nfc.mifareclassic_AuthenticateBlock (nfc_handler.uid,
                 nfc_handler.uidLength,
                 nfc_handler.currentblock,
@@ -522,6 +522,14 @@ void                nfc_read(byte dormitory)
   Serial.print("end read = ");Serial.println(oldPosition);
   
   Serial.flush();
+}
+
+void            displayKeyDebug(byte *key)
+{
+    uint8_t     i = -1;
+
+    while (++i < 6)
+        Serial.print(key[i], HEX);
 }
 
 void wait4button()
