@@ -154,15 +154,15 @@ void loop(void)
     {
       case 0:
         lcd.clear();
-        nfc_read(3, false);
+        nfc_read_write(3, false);
         break;
       case 1:
         lcd.clear();
-        nfc_write();
+        nfc_read_write(3, true);
         break;
       case 2:
         lcd.clear();
-        nfc_read(4, false);
+        nfc_read_write(4, false);
         break;
       case 3:
         lcd.clear();
@@ -284,9 +284,7 @@ void nfc_write()
               success = nfc.mifareclassic_AuthenticateBlock (uid, uidLength, currentblock, 1, KeyA_List_D3[currentblock/4]);
           }
           if (success)
-          {
             authenticated = true;
-          }
           else
           {
             Serial.println("Authentication error");
@@ -373,7 +371,7 @@ void nfc_write()
   Serial.flush();
 }
 
-void                nfc_read(byte dormitory, bool mode)
+void                nfc_read_write(byte dormitory, bool mode)
 {
   t_nfc_handler     nfc_handler;
 
@@ -384,9 +382,9 @@ void                nfc_read(byte dormitory, bool mode)
     nfc_handler.balance[1] = nfc_handler.newBalance - (nfc_handler.balance[0] * 256);
   }
 
-  digitalWrite(readLedPin, HIGH);
+  mode? digitalWrite(writeLedPin, HIGH) : digitalWrite(readLedPin, HIGH);
   lcd.clear();
-  lcd.print("READING ...");
+  mode ? lcd.print("WRITING ...") : lcd.print("READING ...");
   lcd.setCursor(0,1);
   lcd.print("Scan your card");
   
@@ -491,10 +489,27 @@ void                nfc_read(byte dormitory, bool mode)
             Serial.print(" ");
             // Dump the raw data
             nfc.PrintHexChar(nfc_handler.data, 16);
-            
-            if (nfc_handler.currentblock == 24)
+            if (!mode)
             {
-              nfc_handler.currentBalance = (nfc_handler.data[6] * 256) + nfc_handler.data[7];
+                if (nfc_handler.currentblock == 24)
+                    nfc_handler.currentBalance = (nfc_handler.data[6] * 256) + nfc_handler.data[7];
+            }
+            else
+            {
+                if (nfc_handler.currentblock >= 24 && nfc_handler.currentblock <= 26)
+                {
+                    nfc_handler.offset = nfc_handler.currentblock == 25 ? 6 : 7;
+                    nfc.mifareclassic_ReadDataBlock(nfc_handler.currentblock, nfc_handler.data);
+                    nfc_handler.data[nfc_handler.offset - 1] = nfc_handler.balance[0];
+                    nfc_handler.data[nfc_handler.offset] = nfc_handler.balance[1];
+                    nfc_handler.success = nfc.mifareclassic_WriteDataBlock(nfc_handler.currentblock, nfc_handler.data);
+                    if (nfc_handler.success)
+                    {
+                        Serial.print("Block ");Serial.print(nfc_handler.currentblock, DEC);
+                        Serial.print(" ");
+                        nfc.PrintHexChar(nfc_handler.data, 16);
+                    }
+                }
             }
           }
           else
@@ -513,8 +528,16 @@ void                nfc_read(byte dormitory, bool mode)
   lcd.clear();
   lcd.print("Balance :");
   lcd.setCursor(0,1);
-  lcd.print(nfc_handler.currentBalance / 100);
-  Serial.println(nfc_handler.currentBalance, DEC);
+  if (!mode)
+  {
+    lcd.print(nfc_handler.currentBalance / 100);
+    Serial.println(nfc_handler.currentBalance, DEC);
+  }
+  else
+  {
+    lcd.print(nfc_handler.newBalance / 100);
+    Serial.println(nfc_handler.newBalance, DEC);
+  }
   Serial.println("\n\nDONE ! waiting 4 the button");
   digitalWrite(readLedPin, LOW);
   wait4button();

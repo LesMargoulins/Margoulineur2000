@@ -24,6 +24,7 @@ typedef struct	s_nfc_handler
 	uint8_t 	data[16] = {0};                   // Array to store block data during reads
 	int 		currentBalance = 0;			      // Current balance on the card
 	int 		newBalance = 0;					  // New balance input by the user
+	byte  		offset = 0; 					  // Byte offset
 	uint8_t 	balance[2] {0}; 				  // Balance used to modify
 	byte 		KeyA_D3_part1[6] = {0xFF, 0xff, 0xff, 0xff, 0xff, 0xff}; // Key to authenticate sectors different from 5 and 6, dorm 3
 	byte 		KeyA_D3_part2[6] = {0xa9, 0x6c, 0xde, 0x3f, 0x27, 0x86}; // Key to authenticate sectors 5 and 6, dorm 3
