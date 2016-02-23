@@ -377,6 +377,13 @@ void                nfc_read(byte dormitory, bool mode)
 {
   t_nfc_handler     nfc_handler;
 
+  if (mode) // We are in write mode
+  {
+    nfc_handler.newBalance = encoderWrite() * 100;
+    nfc_handler.balance[0] = nfc_handler.newBalance / 256;
+    nfc_handler.balance[1] = nfc_handler.newBalance - (nfc_handler.balance[0] * 256);
+  }
+
   digitalWrite(readLedPin, HIGH);
   lcd.clear();
   lcd.print("READING ...");
