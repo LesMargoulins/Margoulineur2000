@@ -10,18 +10,8 @@
   * Read function for the D4
   * Write function for the D4
   */
-  
-#include <Wire.h>
-#include <PN532_I2C.h>
-#include <PN532.h>
-#include <LiquidCrystal.h>
-#include <Encoder.h>
 
-#define MENUELEMENTS 4 //number of elements in the menu
-
-#define ENCODERSTEPS 2
-#define VALMIN 0 //min value of the new balance in the write sequence.
-#define VALMAX 99999 //maw value of the new balance in the write sequence 
+# include "margoulinade.h"
 
 PN532_I2C pn532_i2c(Wire);
 PN532 nfc(pn532_i2c);
@@ -39,6 +29,7 @@ long oldPosition  = 0;
 long cursorPosition  = 0;
 
 int cycleMenu = 0;
+
 
 byte KeyA_List_D3[][6] =
 {
@@ -161,7 +152,7 @@ void loop(void)
     switch (relativePosition)
     {
       case 0:
-        nfc_read();
+        nfc_read(3);
         break;
       case 1:
         lcd.clear();
@@ -377,16 +368,20 @@ void nfc_write()
   Serial.flush();
 }
 
-void nfc_read()
+void nfc_read(byte dormitory)
 {
   uint8_t success;                          // Flag to check if there was an error with the PN532
   uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
   uint8_t uidLength;                        // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
   uint8_t currentblock;                     // Counter to keep track of which block we're on
   bool authenticated = false;               // Flag to indicate if the sector is authenticated
-  uint8_t data[16];                         // Array to store block data during reads
+  uint8_t data[16];                      // Array to store block data during reads
   
   int currentBalance = 0;
+
+  byte KeyA_D3_part1[6] = {0xFF, 0xff, 0xff, 0xff, 0xff, 0xff};
+  byte KeyA_D3_part2[6] = {0xa9, 0x6c, 0xde, 0x3f, 0x27, 0x86};
+  byte KeyA_D4[6] = {0xa9, 0x6c, 0xde, 0x3f, 0x27, 0x86};
 
   digitalWrite(readLedPin, HIGH);
   lcd.clear();
@@ -426,21 +421,33 @@ void nfc_read()
           // Starting of a new sector ... try to to authenticate
           Serial.print("------------------------Sector ");Serial.print(currentblock/4, DEC);Serial.println("-------------------------");
            Serial.print("keys used:");
-           for (uint8_t i = 0; i < 6; i++)
-           {
-            Serial.print(" ");Serial.print(KeyA_List_D3[currentblock/4][i], HEX);
-           }
-           Serial.println("");
            
-          if (currentblock == 0)
+          if (currentblock >= 5 * 4 && currentblock <= 6 * 4)
           {
-              success = nfc.mifareclassic_AuthenticateBlock (uid, uidLength, currentblock, 0, KeyA_List_D3[0]);
+            for (uint8_t i = 0; i < 6; i++)
+            {
+                Serial.print(" "); dormitory == 3 ?
+                Serial.print(KeyA_D3_part2[i], HEX) :
+                Serial.print(KeyA_D4[i], HEX);
+            }
+              success = dormitory == 3 ?
+              nfc.mifareclassic_AuthenticateBlock (uid, uidLength, currentblock, 0, KeyA_D3_part2) :
+              nfc.mifareclassic_AuthenticateBlock (uid, uidLength, currentblock, 0, KeyA_D4);
               
           }
           else
           {
-              success = nfc.mifareclassic_AuthenticateBlock (uid, uidLength, currentblock, 0, KeyA_List_D3[currentblock/4]);
+            for (uint8_t i = 0; i < 6; i++)
+            {
+                Serial.print(" "); dormitory == 3 ?
+                Serial.print(KeyA_D3_part1[i], HEX) :
+                Serial.print(KeyA_D4[i], HEX);
+            }
+              success = dormitory == 3 ?
+              nfc.mifareclassic_AuthenticateBlock (uid, uidLength, currentblock, 0, KeyA_D3_part1) :
+              nfc.mifareclassic_AuthenticateBlock (uid, uidLength, currentblock, 0, KeyA_D4);
           }
+          Serial.println("");
           if (success)
           {
             authenticated = true;
