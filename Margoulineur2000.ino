@@ -295,16 +295,9 @@ void                nfc_read_write(byte dormitory, bool mode)
             nfc.PrintHexChar(nfc_handler.data, 16);
             if (!mode)
             {
-                if (dormitory == 3)
-                {
-                    if (nfc_handler.currentblock == 24)
-                        nfc_handler.currentBalance = (nfc_handler.data[6] * 256) + nfc_handler.data[7];
-                }
-                else if (dormitory == 4)
-                {
-                    if (nfc_handler.currentblock == 24)
-                        nfc_handler.currentBalance = (nfc_handler.data[0] * 256) + nfc_handler.data[1];   
-                }
+                nfc_handler.offset = dormitory == 4 ? 1 : 7;
+                if (nfc_handler.currentblock == 24)
+                    nfc_handler.currentBalance = (nfc_handler.data[nfc_handler.offset - 1] * 256) + nfc_handler.data[nfc_handler.offset];
             }
             else
             {
