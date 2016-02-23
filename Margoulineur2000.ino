@@ -153,21 +153,25 @@ void loop(void)
     switch (relativePosition)
     {
       case 0:
-        nfc_read(3);
+        lcd.clear();
+        nfc_read(3, false);
         break;
       case 1:
         lcd.clear();
         nfc_write();
         break;
       case 2:
-      break;
+        lcd.clear();
+        nfc_read(4, false);
+        break;
       case 3:
-      break;
+        lcd.clear();
+        break;
     }
    }
 }
 
-int encoderWrite(byte dormitory)
+int encoderWrite()
 {
   int newPosition;
   myEnc.write(0);
@@ -216,7 +220,7 @@ void nfc_write()
   uint8_t data[16]; // = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};                         // Array to store block data during reads
 /**/
 
-  int newBalance = encoderWrite(3) * 100;
+  int newBalance = encoderWrite() * 100;
   Serial.print("New value = ");Serial.println(newBalance);
   uint8_t balance[] = {0, 0};
   balance[0] = newBalance / 256;
@@ -369,7 +373,7 @@ void nfc_write()
   Serial.flush();
 }
 
-void                nfc_read(byte dormitory)
+void                nfc_read(byte dormitory, bool mode)
 {
   t_nfc_handler     nfc_handler;
 
@@ -414,7 +418,7 @@ void                nfc_read(byte dormitory)
         {
           // Starting of a new sector ... try to to authenticate
           Serial.print("------------------------Sector ");Serial.print(nfc_handler.currentblock/4, DEC);Serial.println("-------------------------");
-           Serial.print("keys used:");
+            Serial.print("keys used:");
            
           if (nfc_handler.currentblock >= 5 * 4 && nfc_handler.currentblock <= 6 * 4)
           {
@@ -455,9 +459,7 @@ void                nfc_read(byte dormitory)
           }
           Serial.println("");
           if (nfc_handler.success)
-          {
             nfc_handler.authenticated = true;
-          }
           else
           {
             Serial.println("Authentication error");
@@ -479,14 +481,7 @@ void                nfc_read(byte dormitory)
           {
             // Read successful
             Serial.print("Block ");Serial.print(nfc_handler.currentblock, DEC);
-            if (nfc_handler.currentblock < 10)
-            {
-              Serial.print("  ");
-            }
-            else
-            {
-              Serial.print(" ");
-            }
+            Serial.print(" ");
             // Dump the raw data
             nfc.PrintHexChar(nfc_handler.data, 16);
             
@@ -506,9 +501,7 @@ void                nfc_read(byte dormitory)
       }
     }
     else
-    {
       Serial.println("Ooops ... this doesn't seem to be a Mifare Classic card!");
-    }
   }
   lcd.clear();
   lcd.print("Balance :");
