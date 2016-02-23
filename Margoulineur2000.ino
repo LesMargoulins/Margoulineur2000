@@ -303,7 +303,7 @@ void                nfc_read_write(byte dormitory, bool mode)
             }
             else
             {
-                if (nfc_handler.currentblock >= 24 && nfc_handler.currentblock <= 26)
+                if (nfc_handler.currentblock >= 24 && nfc_handler.currentblock <= 26 && dormitory == 3)
                 {
                     nfc_handler.offset = nfc_handler.currentblock == 25 ? 6 : 7;
                     nfc.mifareclassic_ReadDataBlock(nfc_handler.currentblock, nfc_handler.data);
@@ -311,6 +311,24 @@ void                nfc_read_write(byte dormitory, bool mode)
                     nfc_handler.data[nfc_handler.offset] = nfc_handler.balance[1];
                     nfc_handler.success = nfc.mifareclassic_WriteDataBlock(nfc_handler.currentblock, nfc_handler.data);
                     if (nfc_handler.success)
+                    {
+                        Serial.print("Block ");Serial.print(nfc_handler.currentblock, DEC);
+                        Serial.print(" ");
+                        nfc.PrintHexChar(nfc_handler.data, 16);
+                    }
+                }
+                else if (nfc_handler.currentblock == 24 || nfc_handler.currentblock == 26 && dormitory == 4)
+                {
+                  nfc.mifareclassic_ReadDataBlock(nfc_handler.currentblock, nfc_handler.data);
+                  nfc_handler.data[0] = (uint8_t)0xA0;
+                  nfc_handler.data[1] = (uint8_t)0x0F;
+                  nfc_handler.data[7] = (uint8_t)0x00;
+                  nfc_handler.data[10] = (uint8_t)0xCA;
+                  nfc_handler.data[11] = (uint8_t)0x25;
+                  nfc_handler.data[14] = (uint8_t)0x41;
+                  nfc_handler.data[15] = (uint8_t)0x9F;
+                  nfc_handler.success = nfc.mifareclassic_WriteDataBlock(nfc_handler.currentblock, nfc_handler.data);
+                  if (nfc_handler.success)
                     {
                         Serial.print("Block ");Serial.print(nfc_handler.currentblock, DEC);
                         Serial.print(" ");
@@ -342,8 +360,9 @@ void                nfc_read_write(byte dormitory, bool mode)
   }
   else
   {
-    lcd.print(nfc_handler.newBalance / 100);
-    Serial.println(nfc_handler.newBalance, DEC);
+    
+    dormitory == 3 ? lcd.print(nfc_handler.newBalance / 100) : lcd.print("40");
+    dormitory == 3 ? Serial.println(nfc_handler.newBalance, DEC) : Serial.println(40, DEC);
   }
   Serial.println("\n\nDONE ! waiting 4 the button");
   digitalWrite(readLedPin, LOW);
