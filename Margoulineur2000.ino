@@ -175,9 +175,20 @@ void                nfc_read_write(byte dormitory, bool mode)
 
   if (mode) // We are in write mode
   {
-    nfc_handler.newBalance = encoderWrite() * 100;
-    nfc_handler.balance[0] = nfc_handler.newBalance / 256;
-    nfc_handler.balance[1] = nfc_handler.newBalance - (nfc_handler.balance[0] * 256);
+    if (dormitory == 4)
+    {
+      lcd.print("Balance will be");
+      lcd.setCursor(0,1);
+      lcd.print("changed to 40...");
+      lcd.setCursor(0,0);
+      delay(1500);
+    }
+    else
+    {
+      nfc_handler.newBalance = encoderWrite() * 100;
+      nfc_handler.balance[0] = nfc_handler.newBalance / 256;
+      nfc_handler.balance[1] = nfc_handler.newBalance - (nfc_handler.balance[0] * 256);
+    }
   }
 
   mode? digitalWrite(writeLedPin, HIGH) : digitalWrite(readLedPin, HIGH);
