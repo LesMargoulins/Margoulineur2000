@@ -86,7 +86,8 @@ String menuStrings[][2] =
 void setup(void)
 {
   pinMode(readLedPin, OUTPUT);
-  pinMode(writeLedPin, OUTPUT); lcd.begin(16, 2);  
+  pinMode(writeLedPin, OUTPUT);
+  lcd.begin(16, 2);  
 
   pinMode(encButton, INPUT_PULLUP);
   lcd.print("Margoulineur2000");
@@ -368,8 +369,9 @@ void nfc_write()
   Serial.flush();
 }
 
-void nfc_read(byte dormitory)
+void                nfc_read(byte dormitory)
 {
+  t_nfc_handler     nfc_handler;
   uint8_t success;                          // Flag to check if there was an error with the PN532
   uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
   uint8_t uidLength;                        // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
