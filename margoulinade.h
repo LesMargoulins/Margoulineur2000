@@ -18,6 +18,7 @@ typedef struct	s_nfc_handler
 	uint8_t 	success;                          // Flag to check if there was an error with the PN532
 	uint8_t 	uid[7] = {0};  					  // Buffer to store the returned UID
 	uint8_t 	uidLength;                        // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
+	uint8_t		keyNumber = 0;					  // Which key type to use during authentication (0 = MIFARE_CMD_AUTH_A, 1 = MIFARE_CMD_AUTH_B) 
 	uint8_t 	currentblock;                     // Counter to keep track of which block we're on
 	bool 		authenticated = false;            // Flag to indicate if the sector is authenticated
 	uint8_t 	data[16] = {0};                   // Array to store block data during reads

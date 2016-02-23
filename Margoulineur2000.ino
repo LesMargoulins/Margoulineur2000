@@ -372,18 +372,6 @@ void nfc_write()
 void                nfc_read(byte dormitory)
 {
   t_nfc_handler     nfc_handler;
-  uint8_t success;                          // Flag to check if there was an error with the PN532
-  uint8_t uid[] = { 0, 0, 0, 0, 0, 0, 0 };  // Buffer to store the returned UID
-  uint8_t uidLength;                        // Length of the UID (4 or 7 bytes depending on ISO14443A card type)
-  uint8_t currentblock;                     // Counter to keep track of which block we're on
-  bool authenticated = false;               // Flag to indicate if the sector is authenticated
-  uint8_t data[16];                      // Array to store block data during reads
-  
-  int currentBalance = 0;
-
-  byte KeyA_D3_part1[6] = {0xFF, 0xff, 0xff, 0xff, 0xff, 0xff};
-  byte KeyA_D3_part2[6] = {0xa9, 0x6c, 0xde, 0x3f, 0x27, 0x86};
-  byte KeyA_D4[6] = {0xa9, 0x6c, 0xde, 0x3f, 0x27, 0x86};
 
   digitalWrite(readLedPin, HIGH);
   lcd.clear();
@@ -391,50 +379,58 @@ void                nfc_read(byte dormitory)
   lcd.setCursor(0,1);
   lcd.print("Scan your card");
   
-  success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, uid, &uidLength);
+  nfc_handler.success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, nfc_handler.uid, &nfc_handler.uidLength);
 
-  if (success) {
+  if (nfc_handler.success) {
     // Display some basic information about the card
     Serial.println("Found an ISO14443A card");
     lcd.clear();
     lcd.print("I Found a card !");
-    Serial.print("  UID Length: ");Serial.print(uidLength, DEC);Serial.println(" bytes");
+    Serial.print("  UID Length: ");Serial.print(nfc_handler.uidLength, DEC);Serial.println(" bytes");
     Serial.print("  UID Value: ");
-    for (uint8_t i = 0; i < uidLength; i++) {
-      Serial.print(uid[i], HEX);
+    for (uint8_t i = 0; i < nfc_handler.uidLength; i++) {
+      Serial.print(nfc_handler.uid[i], HEX);
       Serial.print(' ');
     }
     Serial.println("");
 
-    if (uidLength == 4)
+    if (nfc_handler.uidLength == 4)
     {
       Serial.println("Seems to be a Mifare Classic card (4 byte UID)");
 
       // Now we try to go through all 16 sectors (each having 4 blocks)
       // authenticating each sector, and then dumping the blocks
-      for (currentblock = 0; currentblock < 64; currentblock++)
+      for (nfc_handler.currentblock = 0; nfc_handler.currentblock < 64; nfc_handler.currentblock++)
       {
         // Check if this is a new block so that we can reauthenticate
-        if (nfc.mifareclassic_IsFirstBlock(currentblock)) authenticated = false;
+        if (nfc.mifareclassic_IsFirstBlock(nfc_handler.currentblock)) nfc_handler.authenticated = false;
 
         // If the sector hasn't been authenticated, do so first
-        if (!authenticated)
+        if (!nfc_handler.authenticated)
         {
           // Starting of a new sector ... try to to authenticate
-          Serial.print("------------------------Sector ");Serial.print(currentblock/4, DEC);Serial.println("-------------------------");
+          Serial.print("------------------------Sector ");Serial.print(nfc_handler.currentblock/4, DEC);Serial.println("-------------------------");
            Serial.print("keys used:");
            
-          if (currentblock >= 5 * 4 && currentblock <= 6 * 4)
+          if (nfc_handler.currentblock >= 5 * 4 && nfc_handler.currentblock <= 6 * 4)
           {
             for (uint8_t i = 0; i < 6; i++)
             {
                 Serial.print(" "); dormitory == 3 ?
-                Serial.print(KeyA_D3_part2[i], HEX) :
-                Serial.print(KeyA_D4[i], HEX);
+                Serial.print(nfc_handler.KeyA_D3_part2[i], HEX) :
+                Serial.print(nfc_handler.KeyA_D4[i], HEX);
             }
-              success = dormitory == 3 ?
-              nfc.mifareclassic_AuthenticateBlock (uid, uidLength, currentblock, 0, KeyA_D3_part2) :
-              nfc.mifareclassic_AuthenticateBlock (uid, uidLength, currentblock, 0, KeyA_D4);
+              nfc_handler.success = dormitory == 3 ?
+              nfc.mifareclassic_AuthenticateBlock (nfc_handler.uid,
+                nfc_handler.uidLength,
+                nfc_handler.currentblock,
+                nfc_handler.keyNumber,
+                nfc_handler.KeyA_D3_part2) :
+              nfc.mifareclassic_AuthenticateBlock (nfc_handler.uid,
+                nfc_handler.uidLength,
+                nfc_handler.currentblock,
+                nfc_handler.keyNumber,
+                nfc_handler.KeyA_D4);
               
           }
           else
@@ -442,17 +438,25 @@ void                nfc_read(byte dormitory)
             for (uint8_t i = 0; i < 6; i++)
             {
                 Serial.print(" "); dormitory == 3 ?
-                Serial.print(KeyA_D3_part1[i], HEX) :
-                Serial.print(KeyA_D4[i], HEX);
+                Serial.print(nfc_handler.KeyA_D3_part1[i], HEX) :
+                Serial.print(nfc_handler.KeyA_D4[i], HEX);
             }
-              success = dormitory == 3 ?
-              nfc.mifareclassic_AuthenticateBlock (uid, uidLength, currentblock, 0, KeyA_D3_part1) :
-              nfc.mifareclassic_AuthenticateBlock (uid, uidLength, currentblock, 0, KeyA_D4);
+              nfc_handler.success = dormitory == 3 ?
+              nfc.mifareclassic_AuthenticateBlock (nfc_handler.uid,
+                nfc_handler.uidLength,
+                nfc_handler.currentblock,
+                nfc_handler.keyNumber,
+                nfc_handler.KeyA_D3_part1) :
+              nfc.mifareclassic_AuthenticateBlock (nfc_handler.uid,
+                nfc_handler.uidLength,
+                nfc_handler.currentblock,
+                nfc_handler.keyNumber,
+                nfc_handler.KeyA_D4);
           }
           Serial.println("");
-          if (success)
+          if (nfc_handler.success)
           {
-            authenticated = true;
+            nfc_handler.authenticated = true;
           }
           else
           {
@@ -462,20 +466,20 @@ void                nfc_read(byte dormitory)
           }
         }
         // If we're still not authenticated just skip the block
-        if (!authenticated)
+        if (!nfc_handler.authenticated)
         {
-          Serial.print("Block ");Serial.print(currentblock, DEC);Serial.println(" unable to authenticate");
+          Serial.print("Block ");Serial.print(nfc_handler.currentblock, DEC);Serial.println(" unable to authenticate");
         }
         else
         {
           // Authenticated ... we should be able to read the block now
           // Dump the data into the 'data' array
-          success = nfc.mifareclassic_ReadDataBlock(currentblock, data);
-          if (success)
+          nfc_handler.success = nfc.mifareclassic_ReadDataBlock(nfc_handler.currentblock, nfc_handler.data);
+          if (nfc_handler.success)
           {
             // Read successful
-            Serial.print("Block ");Serial.print(currentblock, DEC);
-            if (currentblock < 10)
+            Serial.print("Block ");Serial.print(nfc_handler.currentblock, DEC);
+            if (nfc_handler.currentblock < 10)
             {
               Serial.print("  ");
             }
@@ -484,17 +488,17 @@ void                nfc_read(byte dormitory)
               Serial.print(" ");
             }
             // Dump the raw data
-            nfc.PrintHexChar(data, 16);
+            nfc.PrintHexChar(nfc_handler.data, 16);
             
-            if (currentblock == 24)
+            if (nfc_handler.currentblock == 24)
             {
-              currentBalance = (data[6] * 256) + data[7];
+              nfc_handler.currentBalance = (nfc_handler.data[6] * 256) + nfc_handler.data[7];
             }
           }
           else
           {
             // Oops ... something happened
-            Serial.print("Block ");Serial.print(currentblock, DEC);
+            Serial.print("Block ");Serial.print(nfc_handler.currentblock, DEC);
             Serial.println(" unable to read this block");
             
           }
@@ -509,8 +513,8 @@ void                nfc_read(byte dormitory)
   lcd.clear();
   lcd.print("Balance :");
   lcd.setCursor(0,1);
-  lcd.print(currentBalance / 100);
-  Serial.println(currentBalance, DEC);
+  lcd.print(nfc_handler.currentBalance / 100);
+  Serial.println(nfc_handler.currentBalance, DEC);
   Serial.println("\n\nDONE ! waiting 4 the button");
   digitalWrite(readLedPin, LOW);
   wait4button();
