@@ -9,7 +9,7 @@
 
 # define MENUELEMENTS 4 // Number of elements in the menu
 
-# define ENCODERSTEPS 2 //Steps for the rotary encoder, menu selection
+# define ENCODERSTEPS 4 //Steps for the rotary encoder, menu selection
 # define VALMIN 0 // Min value of the new balance in the write sequence
 # define VALMAX 40 // Max value of the new balance in the write sequence 
 

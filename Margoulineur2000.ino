@@ -376,7 +376,7 @@ void                nfc_read_write(byte dormitory, bool mode)
     dormitory == 3 ? Serial.println(nfc_handler.newBalance, DEC) : Serial.println(40, DEC);
   }
   Serial.println("\n\nDONE ! waiting 4 the button");
-  digitalWrite(readLedPin, LOW);
+  !mode ? digitalWrite(readLedPin, LOW) : digitalWrite(writeLedPin, LOW);
   wait4button();
   lcd.clear();
   Serial.print("end read = ");Serial.println(oldPosition);
