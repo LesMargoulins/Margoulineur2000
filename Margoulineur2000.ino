@@ -262,10 +262,10 @@ void                nfc_read_write(byte dormitory, bool mode)
             }   
           }
           else if (dormitory == 4)
-          {
               nfc_handler.success = nfc.mifareclassic_AuthenticateBlock (nfc_handler.uid, nfc_handler.uidLength, nfc_handler.currentblock, nfc_handler.keyNumber, nfc_handler.KeyA_D4);
-          }
-          
+          else if (dormitory == 13)
+              nfc_handler.success = nfc.mifareclassic_AuthenticateBlock (nfc_handler.uid, nfc_handler.uidLength, nfc_handler.currentblock, nfc_handler.keyNumber, nfc_handler.KeyA_D4);
+
           Serial.println("");
           if (nfc_handler.success)
             nfc_handler.authenticated = true;
@@ -351,25 +351,26 @@ void                nfc_read_write(byte dormitory, bool mode)
       Serial.println("Ooops ... this doesn't seem to be a Mifare Classic card!");
   }
   lcd.clear();
-  lcd.print("Balance :");
-  lcd.setCursor(0,1);
-  if (!mode)
+  lcd.setCursor(0,0);
+  if (!mode && nfc_handler.success)
   {
+    lcd.print("Balance :");
     lcd.print(nfc_handler.currentBalance / 100);
     Serial.println(nfc_handler.currentBalance, DEC);
   }
-  else
-  {
-    
+  else if (mode && nfc_handler.success)
+  {  
+    lcd.print("New balance :");
     dormitory == 3 ? lcd.print(nfc_handler.newBalance / 100) : lcd.print("40");
     dormitory == 3 ? Serial.println(nfc_handler.newBalance, DEC) : Serial.println(40, DEC);
   }
-  Serial.println("\n\nDONE ! waiting 4 the button");
-  !mode ? digitalWrite(readLedPin, LOW) : digitalWrite(writeLedPin, LOW);
+  else
+  {
+      lcd.print("Something went");
+      lcd.setCursor(0,1);
+      lcd.print("wrong");
+  }
   wait4button();
-  lcd.clear();
-  Serial.print("end read = ");Serial.println(oldPosition);
-  
   Serial.flush();
 }
 
@@ -383,8 +384,14 @@ void            displayKeyDebug(byte *key)
 
 void wait4button()
 {
+  Serial.println("\n\nDONE ! waiting 4 the button");
+  digitalWrite(readLedPin, LOW);
+  digitalWrite(writeLedPin, LOW);
   while(digitalRead(encButton))
   {
   }
   delay(500);
+  Serial.print("end read = ");Serial.println(oldPosition);
+  lcd.clear();
+
 }
