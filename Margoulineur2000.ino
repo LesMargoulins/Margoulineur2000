@@ -247,23 +247,39 @@ void                nfc_read_write(byte dormitory, bool mode)
           // Starting of a new sector ... try to to authenticate
           Serial.print("------------------------Sector ");Serial.print(nfc_handler.currentblock/4, DEC);Serial.println("-------------------------");
             Serial.print("keys used:");
-          if (dormitory == 3)
+           
+          if (nfc_handler.currentblock >= 5 * 4 && nfc_handler.currentblock <= 6 * 4)
           {
-            if (nfc_handler.currentblock >= 5 * 4 && nfc_handler.currentblock <= 6 * 4)
-            {
-              displayKeyDebug(nfc_handler.KeyA_D3_part2);
-              nfc.mifareclassic_AuthenticateBlock (nfc_handler.uid, nfc_handler.uidLength, nfc_handler.currentblock, nfc_handler.keyNumber, nfc_handler.KeyA_D3_part2);
-            }
-            else
-            {
-               displayKeyDebug(nfc_handler.KeyA_D3_part1);
-               nfc.mifareclassic_AuthenticateBlock (nfc_handler.uid, nfc_handler.uidLength, nfc_handler.currentblock, nfc_handler.keyNumber, nfc_handler.KeyA_D3_part1);
-            }   
+            //Key display debug
+            dormitory == 3 ? displayKeyDebug(nfc_handler.KeyA_D3_part2) : displayKeyDebug(nfc_handler.KeyA_D4);
+            nfc_handler.success = dormitory == 3 ?
+              nfc.mifareclassic_AuthenticateBlock (nfc_handler.uid,
+                nfc_handler.uidLength,
+                nfc_handler.currentblock,
+                nfc_handler.keyNumber,
+                nfc_handler.KeyA_D3_part2) :
+              nfc.mifareclassic_AuthenticateBlock (nfc_handler.uid,
+                nfc_handler.uidLength,
+                nfc_handler.currentblock,
+                nfc_handler.keyNumber,
+                nfc_handler.KeyA_D4);
+              
           }
-          else if (dormitory == 4)
+          else
           {
-            if (nfc_handler.success = dormitory == 4)
-              nfc.mifareclassic_AuthenticateBlock (nfc_handler.uid, nfc_handler.uidLength, nfc_handler.currentblock, nfc_handler.keyNumber, nfc_handler.KeyA_D4);
+            //Key display debug
+            dormitory == 3 ? displayKeyDebug(nfc_handler.KeyA_D3_part1) : displayKeyDebug(nfc_handler.KeyA_D4);
+            nfc_handler.success = dormitory == 3 ?
+              nfc.mifareclassic_AuthenticateBlock (nfc_handler.uid,
+                nfc_handler.uidLength,
+                nfc_handler.currentblock,
+                nfc_handler.keyNumber,
+                nfc_handler.KeyA_D3_part1) :
+              nfc.mifareclassic_AuthenticateBlock (nfc_handler.uid,
+                nfc_handler.uidLength,
+                nfc_handler.currentblock,
+                nfc_handler.keyNumber,
+                nfc_handler.KeyA_D4);
           }
           Serial.println("");
           if (nfc_handler.success)
