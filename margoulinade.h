@@ -7,11 +7,42 @@
 # include <LiquidCrystal.h>
 # include <Encoder.h>
 
-# define MENUELEMENTS 4 // Number of elements in the menu
+# define MENUELEMENTS 5 // Number of elements in the menu
 
 # define ENCODERSTEPS 4 //Steps for the rotary encoder, menu selection
 # define VALMIN 0 // Min value of the new balance in the write sequence
 # define VALMAX 40 // Max value of the new balance in the write sequence 
+
+/* Global definition */
+
+PN532_I2C pn532_i2c(Wire);
+PN532 nfc(pn532_i2c);
+
+LiquidCrystal lcd(8, 13, 12, 11, 10, 9);
+
+Encoder myEnc(2, 3);
+
+uint8_t readLedPin = 7; //rouge
+uint8_t writeLedPin = 6; //vert
+
+uint8_t encButton = 5;
+
+long oldPosition  = 0;
+long cursorPosition  = 0;
+
+int cycleMenu = 0;
+
+//Menu entries
+String menuStrings[][2] =
+		{
+				{{"1. read D3"},{"read the balance of the dormitory 3"}},
+				{{"2. write D3"},{"write new balance of the dormitory 3"}},
+				{{"3. read D4"},{"read the balance of the dormitory 4"}},
+				{{"4. write D4"},{"write new balance of the dormitory 4"}},
+				{{"5. read new D4"},{"read balance new D4 cards"}},
+				{{"7.Format Blank to D3"},{"Convert a blank cart to a dormitory 3 card"}},
+				{{"8. About"},{"by guigur & oborotev"}},
+		};
 
 typedef struct	s_nfc_handler
 {
@@ -28,8 +59,23 @@ typedef struct	s_nfc_handler
 	uint8_t 	balance[2] {0}; 				  // Balance used to modify
 	byte 		KeyA_D3_part1[6] = {0xFF, 0xff, 0xff, 0xff, 0xff, 0xff}; // Key to authenticate sectors different from 5 and 6, dorm 3
 	byte 		KeyA_D3_part2[6] = {0xa9, 0x6c, 0xde, 0x3f, 0x27, 0x86}; // Key to authenticate sectors 5 and 6, dorm 3
+	byte 		KeyA_new_D4_part1[6] = {0xa9, 0x6c, 0xde, 0x3f, 0x27, 0x86}; // Key to authenticate D4 cards type 2, first part
   byte    KeyA_Blank[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff}; //blank key
 	byte 		KeyA_D4[6]; // Key used to authenticate sectors of dorm 4
 }				t_nfc_handler;
+
+/* Functions prototypes */
+
+//Rotary encoder control functions
+void 		encoderMenu();
+int 		encoderWrite();
+
+//Washing machine nfc read/write functions
+void        displayKeyDebug(byte *key);
+void        writeModeInitialization(t_nfc_handler *handler, byte dormitory);
+void        calcOldD4cardKeyA(t_nfc_handler *nfc_handler);
+bool		guessNewD4Keys(t_nfc_handler *nfc_handler, byte *dormitory);
+void        balanceShow(t_nfc_handler *nfc_handler, bool mode, byte dormitory);
+void        sectorsParsing(t_nfc_handler *nfc_handler, bool mode, byte dormitory);
 
 # endif /* !_MARGOULINADE_H_ */
