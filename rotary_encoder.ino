@@ -24,7 +24,7 @@ int encoderWrite()
 {
     int newPosition;
     myEnc.write(0);
-    Serial.print("jeej");
+    Serial.print(F("jeej"));
     delay(500);
     oldPosition = -1;
     while(digitalRead(encButton))
@@ -45,7 +45,7 @@ int encoderWrite()
             else
             {
                 lcd.clear();
-                lcd.print("New balance :");
+                lcd.print(F("New balance :"));
                 lcd.setCursor(0,1);
                 lcd.print(newPosition / ENCODERSTEPS);
 
@@ -61,13 +61,13 @@ int encoderWrite()
 
 void wait4button()
 {
-  Serial.println("\n\nDONE ! waiting 4 the button");
+  Serial.println(F("\n\nDONE ! waiting 4 the button"));
   digitalWrite(readLedPin, LOW);
   digitalWrite(writeLedPin, LOW);
   while(digitalRead(encButton))
   {
   }
   delay(500);
-  Serial.print("end read = ");Serial.println(oldPosition);
+  Serial.print(F("end read = "));Serial.println(oldPosition);
   lcd.clear();
 }

@@ -20,10 +20,10 @@ void setup(void)
   lcd.begin(16, 2);  
 
   pinMode(encButton, INPUT_PULLUP);
-  lcd.print("Margoulineur2000");
+  lcd.print(F("Margoulineur2000"));
   
   Serial.begin(115200);
-  Serial.println("Looking for PN532...");
+  Serial.println(F("Looking for PN532..."));
 
   nfc.begin();
 
@@ -31,20 +31,20 @@ void setup(void)
   
   if (! versiondata)
   {
-    Serial.print("Didn't find PN53x board");
+    Serial.print(F("Didn't find PN53x board"));
     lcd.setCursor(0,1);
-    lcd.print("NFC MODULE ERROR");
+    lcd.print(F("NFC MODULE ERROR"));
     while (1);
   }
   
-  Serial.print("Found chip PN5"); Serial.println((versiondata>>24) & 0xFF, HEX);
-  Serial.print("Firmware ver. "); Serial.print((versiondata>>16) & 0xFF, DEC);
+  Serial.print(F("Found chip PN5")); Serial.println((versiondata>>24) & 0xFF, HEX);
+  Serial.print(F("Firmware ver. ")); Serial.print((versiondata>>16) & 0xFF, DEC);
   Serial.print('.'); Serial.println((versiondata>>8) & 0xFF, DEC);
 
   nfc.SAMConfig(); // configure board to read RFID tags
   
   lcd.setCursor(0,1);
-  lcd.print("NFC OK");
+  lcd.print(F("NFC OK"));
   delay(1000);
   lcd.clear();
   }
@@ -59,7 +59,7 @@ void loop(void)
   encoderMenu();
   if (!digitalRead(encButton))
    {
-    Serial.println("BOUTON !");
+    Serial.println(F("BOUTON !"));
     switch (relativePosition)
     {
       case 0:
@@ -99,21 +99,21 @@ void                nfc_read_write(byte dormitory, bool mode)
 
   mode? digitalWrite(writeLedPin, HIGH) : digitalWrite(readLedPin, HIGH);
   lcd.clear();
-  mode ? lcd.print("WRITING ...") : lcd.print("READING ...");
+  mode ? lcd.print(F("WRITING ...")) : lcd.print(F("READING ..."));
   lcd.setCursor(0,1);
-  lcd.print("Scan your card");
+  lcd.print(F("Scan your card"));
   
   nfc_handler.success = nfc.readPassiveTargetID(PN532_MIFARE_ISO14443A, nfc_handler.uid, &nfc_handler.uidLength);
 
   if (nfc_handler.success) {
     // Display some basic information about the card
-    Serial.println("Found an ISO14443A card");
+    Serial.println(F("Found an ISO14443A card"));
     lcd.clear();
-    lcd.print("I Found a card !");
-    Serial.print("  UID Length: ");
+    lcd.print(F("I Found a card !"));
+    Serial.print(F("  UID Length: "));
     Serial.print(nfc_handler.uidLength, DEC);
-    Serial.println(" bytes");
-    Serial.print("  UID Value: ");
+    Serial.println(F(" bytes"));
+    Serial.print(F("  UID Value: "));
     for (uint8_t i = 0; i < nfc_handler.uidLength; i++)
     {
       Serial.print(nfc_handler.uid[i], HEX);
@@ -123,7 +123,7 @@ void                nfc_read_write(byte dormitory, bool mode)
 
     if (nfc_handler.uidLength == 4)
     {
-      Serial.println("Seems to be a Mifare Classic card (4 byte UID)");
+      Serial.println(F("Seems to be a Mifare Classic card (4 byte UID)"));
         if (dormitory == 4)
             calcOldD4cardKeyA(&nfc_handler);
         else if (dormitory == 5)
@@ -134,7 +134,7 @@ void                nfc_read_write(byte dormitory, bool mode)
         sectorsParsing(&nfc_handler, mode, dormitory);
     }
     else
-      Serial.println("Ooops ... this doesn't seem to be a Mifare Classic card!");
+      Serial.println(F("Ooops ... this doesn't seem to be a Mifare Classic card!"));
   }
   lcd.clear();
   lcd.setCursor(0,0);
