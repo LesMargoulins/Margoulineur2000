@@ -82,8 +82,8 @@ void        balanceShow(t_nfc_handler *nfc_handler, bool mode, byte dormitory)
     else if (mode && nfc_handler->success)
     {
         lcd.print(F("New balance :"));
-        dormitory == 3 ? lcd.print(nfc_handler->newBalance / 100) : lcd.print("40");
-        dormitory == 3 ? Serial.println(nfc_handler->newBalance, DEC) : Serial.println(40, DEC);
+        dormitory == 3 || 5 ? lcd.print(nfc_handler->newBalance / 100) : lcd.print("40");
+        dormitory == 3 || 5 ? Serial.println(nfc_handler->newBalance, DEC) : Serial.println(40, DEC);
     }
     else
     {
@@ -187,9 +187,12 @@ void        sectorsParsing(t_nfc_handler *nfc_handler, bool mode, byte dormitory
                 }
                 else
                 {
-                    if (nfc_handler->currentblock >= 24 && nfc_handler->currentblock <= 26 && dormitory == 3)
+                    if (nfc_handler->currentblock >= 24 && nfc_handler->currentblock <= 26 && (dormitory == 3 || dormitory == 5))
                     {
-                        nfc_handler->offset = nfc_handler->currentblock == 25 ? 6 : 7;
+                        if (dormitory == 3)
+                            nfc_handler->offset = nfc_handler->currentblock == 25 ? 6 : 7;
+                        else
+                            nfc_handler->offset = nfc_handler->currentblock == 25 ? 8 : 7;
                         nfc.mifareclassic_ReadDataBlock(nfc_handler->currentblock, nfc_handler->data);
                         nfc_handler->data[nfc_handler->offset - 1] = nfc_handler->balance[0];
                         nfc_handler->data[nfc_handler->offset] = nfc_handler->balance[1];

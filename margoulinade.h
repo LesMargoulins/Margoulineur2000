@@ -8,11 +8,11 @@
 # include <Encoder.h>
 
 
-# define MENUELEMENTS 6 // Number of elements in the menu
+# define MENUELEMENTS 8 // Number of elements in the menu
 
-# define ENCODERSTEPS 2 //Steps for the rotary encoder, menu selection
+# define ENCODERSTEPS 4 //Steps for the rotary encoder, menu selection
 # define VALMIN 0 // Min value of the new balance in the write sequence
-# define VALMAX 40 // Max value of the new balance in the write sequence 
+# define VALMAX 50 // Max value of the new balance in the write sequence
 
 /* Global definition */
 
@@ -41,6 +41,7 @@ String menuStrings[][2] =
 				{{"3. read D4"},{"read the balance of the dormitory 4"}},
 				{{"4. write D4"},{"write new balance of the dormitory 4"}},
 				{{"5. read new D4"},{"read balance new D4 cards"}},
+				{{"6. write new D4"},{"write balance new D4 cards"}},
 				{{"7.Format Blank to D3"},{"Convert a blank cart to a dormitory 3 card"}},
 				{{"8. About"},{"by guigur & oborotev"}},
 		};

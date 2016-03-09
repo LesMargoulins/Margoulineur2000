@@ -84,6 +84,10 @@ void loop(void)
         break;
       case 5:
         lcd.clear();
+            nfc_read_write(5, true);
+            break;
+      case 6:
+        lcd.clear();
         nfc_read_write(13, true);  
         break;     
     }

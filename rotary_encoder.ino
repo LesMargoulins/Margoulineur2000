@@ -6,13 +6,13 @@ void encoderMenu()
   if ((newPosition != oldPosition) )
   {
     oldPosition = newPosition;
-    if(oldPosition > (MENUELEMENTS * 2) - 1)
+    if(oldPosition > (MENUELEMENTS * ENCODERSTEPS) - 1)
     {
        myEnc.write(0);
     } 
     else if(oldPosition < 0)
     {
-       myEnc.write(MENUELEMENTS * 2 - 1);
+       myEnc.write(MENUELEMENTS * ENCODERSTEPS - 1);
     }
     Serial.println(newPosition / ENCODERSTEPS);
     cycleMenu = (abs(newPosition) / ENCODERSTEPS) / MENUELEMENTS;
