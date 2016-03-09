@@ -126,6 +126,25 @@ void        sectorsParsing(t_nfc_handler *nfc_handler, bool mode, byte dormitory
             }
             else if (dormitory == 4)
                 nfc_handler->success = nfc.mifareclassic_AuthenticateBlock (nfc_handler->uid, nfc_handler->uidLength, nfc_handler->currentblock, nfc_handler->keyNumber, nfc_handler->KeyA_D4);
+            else if (dormitory == 5)
+            {
+                if (nfc_handler->currentblock >= 10 * 4 && nfc_handler->currentblock < 11 * 4)
+                {
+                    displayKeyDebug(nfc_handler->KeyA_new_D4_part2);
+                    nfc_handler->success = nfc.mifareclassic_AuthenticateBlock(nfc_handler->uid, nfc_handler->uidLength,
+                                                                               nfc_handler->currentblock,
+                                                                               nfc_handler->keyNumber,
+                                                                               nfc_handler->KeyA_new_D4_part2);
+                }
+                else
+                {
+                    displayKeyDebug(nfc_handler->KeyA_new_D4_part1);
+                    nfc_handler->success = nfc.mifareclassic_AuthenticateBlock(nfc_handler->uid, nfc_handler->uidLength,
+                                                                               nfc_handler->currentblock,
+                                                                               nfc_handler->keyNumber,
+                                                                               nfc_handler->KeyA_new_D4_part1);
+                }
+            }
             else if (dormitory == 13)
                 nfc_handler->success = nfc.mifareclassic_AuthenticateBlock (nfc_handler->uid, nfc_handler->uidLength, nfc_handler->currentblock, nfc_handler->keyNumber, nfc_handler->KeyA_D4);
 
@@ -158,11 +177,13 @@ void        sectorsParsing(t_nfc_handler *nfc_handler, bool mode, byte dormitory
                 nfc.PrintHexChar(nfc_handler->data, 16);
                 if (!mode)
                 {
-                    nfc_handler->offset = dormitory == 4 ? 0 : 7;
-                    if (nfc_handler->currentblock == 24)
-                        nfc_handler->currentBalance = dormitory == 4 ?
-                                                     (nfc_handler->data[nfc_handler->offset + 1] * 256) + nfc_handler->data[nfc_handler->offset] :
-                                                     (nfc_handler->data[nfc_handler->offset - 1] * 256) + nfc_handler->data[nfc_handler->offset];
+                        nfc_handler->offset = dormitory == 4 ? 0 : 7;
+                        if (nfc_handler->currentblock == 24)
+                            nfc_handler->currentBalance = dormitory == 4 ?
+                                                          (nfc_handler->data[nfc_handler->offset + 1] * 256) +
+                                                          nfc_handler->data[nfc_handler->offset] :
+                                                          (nfc_handler->data[nfc_handler->offset - 1] * 256) +
+                                                          nfc_handler->data[nfc_handler->offset];
                 }
                 else
                 {
