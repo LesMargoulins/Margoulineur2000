@@ -2,22 +2,22 @@
 
 void encoderMenu()
 {
-    int newPosition = myEnc.read();
-    if ((newPosition != oldPosition) )
+  int newPosition = myEnc.read();
+  if ((newPosition != oldPosition) )
+  {
+    oldPosition = newPosition;
+    if(oldPosition > (MENUELEMENTS * 2) - 1)
     {
-        oldPosition = newPosition;
-        if(oldPosition < 0)
-        {
-            myEnc.write(255);
-        }
-        if(oldPosition > 255)
-        {
-            myEnc.write(0);
-        }
-        Serial.println(newPosition / ENCODERSTEPS);
-        cycleMenu = (abs(newPosition) / ENCODERSTEPS) / MENUELEMENTS;
-        lcd.clear();
+       myEnc.write(0);
+    } 
+    else if(oldPosition < 0)
+    {
+       myEnc.write(MENUELEMENTS * 2 - 1);
     }
+    Serial.println(newPosition / ENCODERSTEPS);
+    cycleMenu = (abs(newPosition) / ENCODERSTEPS) / MENUELEMENTS;
+    lcd.clear();
+  }
 }
 
 int encoderWrite()
@@ -61,14 +61,13 @@ int encoderWrite()
 
 void wait4button()
 {
-    Serial.println("\n\nDONE ! waiting 4 the button");
-    digitalWrite(readLedPin, LOW);
-    digitalWrite(writeLedPin, LOW);
-    while(digitalRead(encButton))
-    {
-    }
-    delay(500);
-    Serial.print("end read = ");Serial.println(oldPosition);
-    lcd.clear();
-
+  Serial.println("\n\nDONE ! waiting 4 the button");
+  digitalWrite(readLedPin, LOW);
+  digitalWrite(writeLedPin, LOW);
+  while(digitalRead(encButton))
+  {
+  }
+  delay(500);
+  Serial.print("end read = ");Serial.println(oldPosition);
+  lcd.clear();
 }

@@ -5,7 +5,10 @@ void            displayKeyDebug(byte *key)
     uint8_t     i = -1;
 
     while (++i < 6)
+    {
         Serial.print(key[i], HEX);
+        Serial.print(" ");
+    }
 }
 
 void        writeModeInitialization(t_nfc_handler *nfc_handler, byte dormitory)
