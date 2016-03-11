@@ -155,7 +155,7 @@ void        sectorsParsing(t_nfc_handler *nfc_handler, bool mode, byte dormitory
                 }
             }
             else if (dormitory == 13)
-                nfc_handler->success = nfc.mifareclassic_AuthenticateBlock (nfc_handler->uid, nfc_handler->uidLength, nfc_handler->currentblock, nfc_handler->keyNumber, nfc_handler->KeyA_D4);
+                nfc_handler->success = nfc.mifareclassic_AuthenticateBlock (nfc_handler->uid, nfc_handler->uidLength, nfc_handler->currentblock, nfc_handler->keyNumber, nfc_handler->KeyA_Blank);
 
             Serial.println("");
             if (nfc_handler->success)
@@ -193,19 +193,23 @@ void        sectorsParsing(t_nfc_handler *nfc_handler, bool mode, byte dormitory
                 }
                 else
                 {
-                    if (nfc_handler->currentblock >= 24 && nfc_handler->currentblock <= 26 && (dormitory == 3 || dormitory == 5))
+                    if (nfc_handler->currentblock >= 24 && nfc_handler->currentblock <= 26 && dormitory != 4)
                     {
-                        if (dormitory == 3)
+                        if (dormitory == 3 || dormitory == 13)
                             nfc_handler->offset = nfc_handler->currentblock == 25 ? 6 : 7;
                         else
                             nfc_handler->offset = nfc_handler->currentblock == 25 ? 8 : 7;
+                        if (dormitory == 13)
+                        {
+                            nfc_handler->success = nfc.mifareclassic_WriteDataBlock(nfc_handler->currentblock, nfc_handler->data);
+                        }
                         nfc.mifareclassic_ReadDataBlock(nfc_handler->currentblock, nfc_handler->data);
                         nfc_handler->data[nfc_handler->offset - 1] = nfc_handler->balance[0];
                         nfc_handler->data[nfc_handler->offset] = nfc_handler->balance[1];
                         nfc_handler->success = nfc.mifareclassic_WriteDataBlock(nfc_handler->currentblock, nfc_handler->data);
                         if (nfc_handler->success)
                         {
-                            Serial.print(F("Block "));Serial.print(nfc_handler->currentblock, DEC);
+                            Serial.print(F("new B "));Serial.print(nfc_handler->currentblock, DEC);
                             Serial.print(" ");
                             nfc.PrintHexChar(nfc_handler->data, 16);
                         }
@@ -223,7 +227,7 @@ void        sectorsParsing(t_nfc_handler *nfc_handler, bool mode, byte dormitory
                         nfc_handler->success = nfc.mifareclassic_WriteDataBlock(nfc_handler->currentblock, nfc_handler->data);
                         if (nfc_handler->success)
                         {
-                            Serial.print(F("Block "));Serial.print(nfc_handler->currentblock, DEC);
+                            Serial.print(F("new B "));Serial.print(nfc_handler->currentblock, DEC);
                             Serial.print(" ");
                             nfc.PrintHexChar(nfc_handler->data, 16);
                         }
