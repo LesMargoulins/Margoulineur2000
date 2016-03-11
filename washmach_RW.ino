@@ -96,9 +96,18 @@ void        balanceShow(t_nfc_handler *nfc_handler, bool mode, byte dormitory)
 
 void        sectorsParsing(t_nfc_handler *nfc_handler, bool mode, byte dormitory)
 {
-    // Now we try to go through all 16 sectors (each having 4 blocks)
-    // authenticating each sector, and then dumping the blocks
-    for (nfc_handler->currentblock = 0; nfc_handler->currentblock < 64; nfc_handler->currentblock++)
+    short   first_block = 0;
+    short   last_block = 64;
+
+    if (OPTIMIZATION_MODE)
+    {
+        first_block = 24;
+        if (!mode)
+            last_block = 26;
+        else
+            last_block = 27;
+    }
+    for (nfc_handler->currentblock = first_block; nfc_handler->currentblock < last_block; nfc_handler->currentblock++)
     {
         // Check if this is a new block so that we can reauthenticate
         if (nfc.mifareclassic_IsFirstBlock(nfc_handler->currentblock))
@@ -165,12 +174,9 @@ void        sectorsParsing(t_nfc_handler *nfc_handler, bool mode, byte dormitory
         }
         else
         {
-            // Authenticated ... we should be able to read the block now
-            // Dump the data into the 'data' array
             nfc_handler->success = nfc.mifareclassic_ReadDataBlock(nfc_handler->currentblock, nfc_handler->data);
             if (nfc_handler->success)
             {
-                // Read successful
                 Serial.print(F("Block "));Serial.print(nfc_handler->currentblock, DEC);
                 Serial.print(" ");
                 // Dump the raw data

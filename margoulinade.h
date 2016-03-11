@@ -8,6 +8,8 @@
 # include <Encoder.h>
 
 
+# define OPTIMIZATION_MODE 1 // Sets the optimization, 1 to only go through the desirable blocks, 0 for all blocks
+
 # define MENUELEMENTS 8 // Number of elements in the menu
 
 # define ENCODERSTEPS 4 //Steps for the rotary encoder, menu selection

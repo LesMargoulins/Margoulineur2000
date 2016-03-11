@@ -25,6 +25,7 @@ int encoderWrite()
     int newPosition;
     myEnc.write(0);
     Serial.print(F("jeej"));
+    lcd.print(F("Loading..."));
     delay(500);
     oldPosition = -1;
     while(digitalRead(encButton))
