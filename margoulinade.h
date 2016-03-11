@@ -45,7 +45,7 @@ String menuStrings[][2] =
 				{{"4. write D4"},{"write new balance of the dormitory 4"}},
 				{{"5. read new D4"},{"read balance new D4 cards"}},
 				{{"6. write new D4"},{"write balance new D4 cards"}},
-				{{"7. About"},{"by guigur & oborotev"}},
+				{{"7. About by"},{"guigur/oborotev"}},
 		};
 
 typedef struct	s_nfc_handler
