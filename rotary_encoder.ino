@@ -62,13 +62,15 @@ int encoderWrite()
 
 void wait4button()
 {
-  Serial.println(F("\n\nDONE ! waiting 4 the button"));
-  digitalWrite(readLedPin, LOW);
-  digitalWrite(writeLedPin, LOW);
-  while(digitalRead(encButton))
-  {
-  }
-  delay(500);
-  Serial.print(F("end read = "));Serial.println(oldPosition);
-  lcd.clear();
+    Serial.println(F("\n\nDONE ! waiting 4 the button"));
+    digitalWrite(readLedPin, LOW);
+    digitalWrite(writeLedPin, LOW);
+    if (OPTIMIZATION_MODE)
+        delay(500);
+    while(digitalRead(encButton))
+    {
+    }
+    delay(500);
+    Serial.print(F("end read = "));Serial.println(oldPosition);
+    lcd.clear();
 }

@@ -142,7 +142,7 @@ void                nfc_read_write(byte dormitory, bool mode)
   }
   lcd.clear();
   lcd.setCursor(0,0);
-    balanceShow(&nfc_handler, mode, dormitory);
+  balanceShow(&nfc_handler, mode, dormitory);
   wait4button();
   Serial.flush();
 }
