@@ -8,7 +8,8 @@
 # include <Encoder.h>
 
 
-# define OPTIMIZATION_MODE 1 // Sets the optimization, 1 to only go through the desirable blocks, 0 for all blocks
+# define OPTIMIZATION_MODE 0 // Sets the optimization, 1 to only go through the desirable blocks, 0 for all blocks
+# define POURRISSAGE 1 // Sets the writing of silly messages in some blocks of the card
 
 # define MENUELEMENTS 8 // Number of elements in the menu
 
