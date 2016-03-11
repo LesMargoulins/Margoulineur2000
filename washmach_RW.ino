@@ -192,11 +192,11 @@ void        sectorsParsing(t_nfc_handler *nfc_handler, bool mode, byte dormitory
             if (dormitory == 3)
                 dormitory3Authentication(nfc_handler);
             else if (dormitory == 4)
-                nfc_handler->success = nfc.mifareclassic_AuthenticateBlock (nfc_handler->uid, nfc_handler->uidLength, nfc_handler->currentblock, nfc_handler->keyNumber, nfc_handler->KeyA_D4);
+                nfc_handler->success = nfc.mifareclassic_AuthenticateBlock(nfc_handler->uid, nfc_handler->uidLength, nfc_handler->currentblock, nfc_handler->keyNumber, nfc_handler->KeyA_D4);
             else if (dormitory == 5)
                 dormitory4newCardsAuthentication(nfc_handler);
             else if (dormitory == 13)
-                nfc_handler->success = nfc.mifareclassic_AuthenticateBlock (nfc_handler->uid, nfc_handler->uidLength, nfc_handler->currentblock, nfc_handler->keyNumber, nfc_handler->KeyA_Blank);
+                nfc_handler->success = nfc.mifareclassic_AuthenticateBlock(nfc_handler->uid, nfc_handler->uidLength, nfc_handler->currentblock, nfc_handler->keyNumber, nfc_handler->KeyA_Blank);
 
             Serial.println("");
             if (nfc_handler->success)
@@ -251,7 +251,6 @@ void        sectorsParsing(t_nfc_handler *nfc_handler, bool mode, byte dormitory
                 // Oops ... something happened
                 Serial.print(F("Block "));Serial.print(nfc_handler->currentblock, DEC);
                 Serial.println(F(" unable to read this block"));
-
             }
         }
     }

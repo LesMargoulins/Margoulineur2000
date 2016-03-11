@@ -29,7 +29,7 @@ void setup(void)
 
   uint32_t versiondata = nfc.getFirmwareVersion();
   
-  if (! versiondata)
+  if (!versiondata)
   {
     Serial.print(F("Didn't find PN53x board"));
     lcd.setCursor(0,1);
@@ -79,17 +79,13 @@ void loop(void)
         nfc_read_write(4, true);
         break;
       case 4:
-        lcd.clear();
+            lcd.clear();
             nfc_read_write(5, false);
-        break;
+            break;
       case 5:
-        lcd.clear();
+            lcd.clear();
             nfc_read_write(5, true);
             break;
-      case 6:
-        lcd.clear();
-        nfc_read_write(13, true);  
-        break;     
     }
    }
 }

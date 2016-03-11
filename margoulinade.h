@@ -8,10 +8,10 @@
 # include <Encoder.h>
 
 
-# define OPTIMIZATION_MODE 0 // Sets the optimization, 1 to only go through the desirable blocks, 0 for all blocks
-# define POURRISSAGE 1 // Sets the writing of silly messages in some blocks of the card
+# define OPTIMIZATION_MODE 1 // Sets the optimization, 1 to only go through the desirable blocks, 0 for all blocks
+# define POURRISSAGE 0 // Sets the writing of silly messages in some blocks of the card. It will not work with optimization on
 
-# define MENUELEMENTS 8 // Number of elements in the menu
+# define MENUELEMENTS 7 // Number of elements in the menu
 
 # define ENCODERSTEPS 4 //Steps for the rotary encoder, menu selection
 # define VALMIN 0 // Min value of the new balance in the write sequence
@@ -45,8 +45,7 @@ String menuStrings[][2] =
 				{{"4. write D4"},{"write new balance of the dormitory 4"}},
 				{{"5. read new D4"},{"read balance new D4 cards"}},
 				{{"6. write new D4"},{"write balance new D4 cards"}},
-				{{"7.Format Blank to D3"},{"Convert a blank cart to a dormitory 3 card"}},
-				{{"8. About"},{"by guigur & oborotev"}},
+				{{"7. About"},{"by guigur & oborotev"}},
 		};
 
 typedef struct	s_nfc_handler
