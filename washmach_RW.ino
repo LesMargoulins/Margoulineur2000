@@ -71,6 +71,75 @@ bool        guessNewD4Keys(t_nfc_handler *nfc_handler, byte *dormitory)
     return true;
 }
 
+void        dormitory3Authentication(t_nfc_handler *nfc_handler)
+{
+    if (nfc_handler->currentblock >= 5 * 4 && nfc_handler->currentblock <= 6 * 4)
+    {
+        displayKeyDebug(nfc_handler->KeyA_D3_part2);
+        nfc_handler->success = nfc.mifareclassic_AuthenticateBlock (nfc_handler->uid, nfc_handler->uidLength, nfc_handler->currentblock, nfc_handler->keyNumber, nfc_handler->KeyA_D3_part2);
+    }
+    else
+    {
+        displayKeyDebug(nfc_handler->KeyA_D3_part1);
+        nfc_handler->success = nfc.mifareclassic_AuthenticateBlock (nfc_handler->uid, nfc_handler->uidLength, nfc_handler->currentblock, nfc_handler->keyNumber, nfc_handler->KeyA_D3_part1);
+    }
+}
+
+void        dormitory4newCardsAuthentication(t_nfc_handler *nfc_handler)
+{
+    if (nfc_handler->currentblock >= 10 * 4 && nfc_handler->currentblock < 11 * 4)
+    {
+        displayKeyDebug(nfc_handler->KeyA_new_D4_part2);
+        nfc_handler->success = nfc.mifareclassic_AuthenticateBlock(nfc_handler->uid, nfc_handler->uidLength,
+                                                                   nfc_handler->currentblock,
+                                                                   nfc_handler->keyNumber,
+                                                                   nfc_handler->KeyA_new_D4_part2);
+    }
+    else
+    {
+        displayKeyDebug(nfc_handler->KeyA_new_D4_part1);
+        nfc_handler->success = nfc.mifareclassic_AuthenticateBlock(nfc_handler->uid, nfc_handler->uidLength,
+                                                                   nfc_handler->currentblock,
+                                                                   nfc_handler->keyNumber,
+                                                                   nfc_handler->KeyA_new_D4_part1);
+    }
+}
+
+void        balanceReadOnly(t_nfc_handler *nfc_handler, byte dormitory)
+{
+    nfc_handler->offset = dormitory == 4 ? 0 : 7;
+    if (nfc_handler->currentblock == 24)
+        nfc_handler->currentBalance = dormitory == 4 ?
+                                      (nfc_handler->data[nfc_handler->offset + 1] * 256) +
+                                      nfc_handler->data[nfc_handler->offset] :
+                                      (nfc_handler->data[nfc_handler->offset - 1] * 256) +
+                                      nfc_handler->data[nfc_handler->offset];
+}
+
+void        newBalanceWrite(t_nfc_handler *nfc_handler)
+{
+    if (nfc_handler->success)
+    {
+        Serial.print(F("new B "));Serial.print(nfc_handler->currentblock, DEC);
+        Serial.print(" ");
+        nfc.PrintHexChar(nfc_handler->data, 16);
+    }
+}
+
+void        oldDormitory4WriteBalance(t_nfc_handler *nfc_handler)
+{
+    nfc.mifareclassic_ReadDataBlock(nfc_handler->currentblock, nfc_handler->data);
+    nfc_handler->data[0] = (uint8_t)0xA0;
+    nfc_handler->data[1] = (uint8_t)0x0F;
+    nfc_handler->data[7] = (uint8_t)0x00;
+    nfc_handler->data[10] = (uint8_t)0xCA;
+    nfc_handler->data[11] = (uint8_t)0x25;
+    nfc_handler->data[14] = (uint8_t)0x41;
+    nfc_handler->data[15] = (uint8_t)0x9F;
+    nfc_handler->success = nfc.mifareclassic_WriteDataBlock(nfc_handler->currentblock, nfc_handler->data);
+    newBalanceWrite(nfc_handler);
+}
+
 void        balanceShow(t_nfc_handler *nfc_handler, bool mode, byte dormitory)
 {
     if (!mode && nfc_handler->success)
@@ -121,39 +190,11 @@ void        sectorsParsing(t_nfc_handler *nfc_handler, bool mode, byte dormitory
             Serial.print(F("keys used:"));
 
             if (dormitory == 3)
-            {
-                if (nfc_handler->currentblock >= 5 * 4 && nfc_handler->currentblock <= 6 * 4)
-                {
-                    displayKeyDebug(nfc_handler->KeyA_D3_part2);
-                    nfc_handler->success = nfc.mifareclassic_AuthenticateBlock (nfc_handler->uid, nfc_handler->uidLength, nfc_handler->currentblock, nfc_handler->keyNumber, nfc_handler->KeyA_D3_part2);
-                }
-                else
-                {
-                    displayKeyDebug(nfc_handler->KeyA_D3_part1);
-                    nfc_handler->success = nfc.mifareclassic_AuthenticateBlock (nfc_handler->uid, nfc_handler->uidLength, nfc_handler->currentblock, nfc_handler->keyNumber, nfc_handler->KeyA_D3_part1);
-                }
-            }
+                dormitory3Authentication(nfc_handler);
             else if (dormitory == 4)
                 nfc_handler->success = nfc.mifareclassic_AuthenticateBlock (nfc_handler->uid, nfc_handler->uidLength, nfc_handler->currentblock, nfc_handler->keyNumber, nfc_handler->KeyA_D4);
             else if (dormitory == 5)
-            {
-                if (nfc_handler->currentblock >= 10 * 4 && nfc_handler->currentblock < 11 * 4)
-                {
-                    displayKeyDebug(nfc_handler->KeyA_new_D4_part2);
-                    nfc_handler->success = nfc.mifareclassic_AuthenticateBlock(nfc_handler->uid, nfc_handler->uidLength,
-                                                                               nfc_handler->currentblock,
-                                                                               nfc_handler->keyNumber,
-                                                                               nfc_handler->KeyA_new_D4_part2);
-                }
-                else
-                {
-                    displayKeyDebug(nfc_handler->KeyA_new_D4_part1);
-                    nfc_handler->success = nfc.mifareclassic_AuthenticateBlock(nfc_handler->uid, nfc_handler->uidLength,
-                                                                               nfc_handler->currentblock,
-                                                                               nfc_handler->keyNumber,
-                                                                               nfc_handler->KeyA_new_D4_part1);
-                }
-            }
+                dormitory4newCardsAuthentication(nfc_handler);
             else if (dormitory == 13)
                 nfc_handler->success = nfc.mifareclassic_AuthenticateBlock (nfc_handler->uid, nfc_handler->uidLength, nfc_handler->currentblock, nfc_handler->keyNumber, nfc_handler->KeyA_Blank);
 
@@ -182,15 +223,7 @@ void        sectorsParsing(t_nfc_handler *nfc_handler, bool mode, byte dormitory
                 // Dump the raw data
                 nfc.PrintHexChar(nfc_handler->data, 16);
                 if (!mode)
-                {
-                        nfc_handler->offset = dormitory == 4 ? 0 : 7;
-                        if (nfc_handler->currentblock == 24)
-                            nfc_handler->currentBalance = dormitory == 4 ?
-                                                          (nfc_handler->data[nfc_handler->offset + 1] * 256) +
-                                                          nfc_handler->data[nfc_handler->offset] :
-                                                          (nfc_handler->data[nfc_handler->offset - 1] * 256) +
-                                                          nfc_handler->data[nfc_handler->offset];
-                }
+                    balanceReadOnly(nfc_handler, dormitory);
                 else
                 {
                     if (nfc_handler->currentblock >= 24 && nfc_handler->currentblock <= 26 && dormitory != 4)
@@ -207,31 +240,10 @@ void        sectorsParsing(t_nfc_handler *nfc_handler, bool mode, byte dormitory
                         nfc_handler->data[nfc_handler->offset - 1] = nfc_handler->balance[0];
                         nfc_handler->data[nfc_handler->offset] = nfc_handler->balance[1];
                         nfc_handler->success = nfc.mifareclassic_WriteDataBlock(nfc_handler->currentblock, nfc_handler->data);
-                        if (nfc_handler->success)
-                        {
-                            Serial.print(F("new B "));Serial.print(nfc_handler->currentblock, DEC);
-                            Serial.print(" ");
-                            nfc.PrintHexChar(nfc_handler->data, 16);
-                        }
+                        newBalanceWrite(nfc_handler);
                     }
                     else if (nfc_handler->currentblock == 24 || nfc_handler->currentblock == 26 && dormitory == 4)
-                    {
-                        nfc.mifareclassic_ReadDataBlock(nfc_handler->currentblock, nfc_handler->data);
-                        nfc_handler->data[0] = (uint8_t)0xA0;
-                        nfc_handler->data[1] = (uint8_t)0x0F;
-                        nfc_handler->data[7] = (uint8_t)0x00;
-                        nfc_handler->data[10] = (uint8_t)0xCA;
-                        nfc_handler->data[11] = (uint8_t)0x25;
-                        nfc_handler->data[14] = (uint8_t)0x41;
-                        nfc_handler->data[15] = (uint8_t)0x9F;
-                        nfc_handler->success = nfc.mifareclassic_WriteDataBlock(nfc_handler->currentblock, nfc_handler->data);
-                        if (nfc_handler->success)
-                        {
-                            Serial.print(F("new B "));Serial.print(nfc_handler->currentblock, DEC);
-                            Serial.print(" ");
-                            nfc.PrintHexChar(nfc_handler->data, 16);
-                        }
-                    }
+                        oldDormitory4WriteBalance(nfc_handler);
                 }
             }
             else

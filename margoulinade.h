@@ -80,7 +80,12 @@ void        displayKeyDebug(byte *key);
 void        writeModeInitialization(t_nfc_handler *handler, byte dormitory);
 void        calcOldD4cardKeyA(t_nfc_handler *nfc_handler);
 bool		guessNewD4Keys(t_nfc_handler *nfc_handler, byte *dormitory);
+void 		dormitory3Authentication(t_nfc_handler *nfc_handler);
+void        dormitory4newCardsAuthentication(t_nfc_handler *nfc_handler);
+void        balanceReadOnly(t_nfc_handler *nfc_handler, byte dormitory);
 void        balanceShow(t_nfc_handler *nfc_handler, bool mode, byte dormitory);
+void        newBalanceWrite(t_nfc_handler *nfc_handler);
+void 		oldDormitory4WriteBalance(t_nfc_handler *nfc_handler);
 void        sectorsParsing(t_nfc_handler *nfc_handler, bool mode, byte dormitory);
 
 # endif /* !_MARGOULINADE_H_ */
