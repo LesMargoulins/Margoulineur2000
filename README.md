@@ -2,7 +2,7 @@
 ![alt a beautiful washing machine](http://i.telegraph.co.uk/multimedia/archive/01697/p_washing-machine_1697696c.jpg "a beautiful washing machine")
 ## Description
 __The Margoulineur2000©__ is a device that can tell you the balance of your washing machine card and overwrite it.
-It is a very useful utility for smelly students and those who just want to annoy the chinese pepole.
+It is a very useful utility for smelly students and those who just want to annoy the chinese people.
 
 ## How to use it
 Simply put your card on the back of the __The Margoulineur2000©__ (where the NFC module is located) and go through the menu to select the option of your choice thanks to the rotary encoder.
@@ -19,9 +19,10 @@ Parts list
 *   10K variable resistor (for the lcd contrast)
 *   PN532 NFC module
 *   Rotary encoder
-*   one LED bycolor, common cathode
+*   One LED bicolor, common cathode
 *   4056 LiPo charger module
-*   a step up module (to get the battery voltage up to 5v)
+*   A step up module (to get the battery voltage up to 5v)
+*   A LiPo battery
 
 ## Diagram
 soon
