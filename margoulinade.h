@@ -29,7 +29,13 @@ Encoder myEnc(2, 3);
 uint8_t readLedPin = 7; //rouge
 uint8_t writeLedPin = 6; //vert
 
-uint8_t encButton = 5;
+uint8_t encButton = 4;
+
+uint8_t buzzer = 5;
+
+uint8_t BatSense = A1;
+uint8_t BatFull = A2;
+uint8_t BatCharg = A3;
 
 long oldPosition  = 0;
 long cursorPosition  = 0;

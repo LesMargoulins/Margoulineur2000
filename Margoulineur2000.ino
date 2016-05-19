@@ -5,19 +5,16 @@
  *  (c) guigur.com 2015
  */
 
- /*
-  * TODO:
-  * Read function for the D4
-  * Write function for the D4
-  */
-
 # include "margoulinade.h"
 
 void setup(void)
 {
   pinMode(readLedPin, OUTPUT);
   pinMode(writeLedPin, OUTPUT);
-  lcd.begin(16, 2);  
+  
+  pinMode(buzzer, OUTPUT);
+
+  lcd.begin(16, 2);
 
   pinMode(encButton, INPUT_PULLUP);
   lcd.print(F("Margoulineur2000"));
@@ -31,12 +28,16 @@ void setup(void)
   
   if (!versiondata)
   {
+    beep(200);
+    beep(200);
     Serial.print(F("Didn't find PN53x board"));
     lcd.setCursor(0,1);
     lcd.print(F("NFC MODULE ERROR"));
     while (1);
   }
-  
+  beep(50);
+  beep(50);
+  beep(50);
   Serial.print(F("Found chip PN5")); Serial.println((versiondata>>24) & 0xFF, HEX);
   Serial.print(F("Firmware ver. ")); Serial.print((versiondata>>16) & 0xFF, DEC);
   Serial.print('.'); Serial.println((versiondata>>8) & 0xFF, DEC);
@@ -47,7 +48,7 @@ void setup(void)
   lcd.print(F("NFC OK"));
   delay(1000);
   lcd.clear();
-  }
+}
 
 void loop(void)
 {
