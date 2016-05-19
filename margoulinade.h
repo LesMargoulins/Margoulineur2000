@@ -35,7 +35,7 @@ uint8_t buzzer = 5;
 
 uint8_t BatSense = A1;
 uint8_t BatFull = A2;
-uint8_t BatCharg = A3;
+uint8_t BatCharg = A3;-
 
 long oldPosition  = 0;
 long cursorPosition  = 0;
@@ -53,7 +53,7 @@ String menuStrings[][2] =
 				{{"4. write D4"},{"write new balance of the dormitory 4"}},
 				{{"5. read new D4"},{"read balance new D4 cards"}},
 				{{"6. write new D4"},{"write balance new D4 cards"}},
-				{{"7. About by"},{"guigur/oborotev"}},
+				{{"7. About"},{""}},
 		};
 
 typedef struct	s_nfc_handler

@@ -68,30 +68,49 @@ void loop(void)
     {
       case 0:
         lcd.clear();
+        beep(50);
         nfc_read_write(3, false);
         break;
       case 1:
         lcd.clear();
+        beep(50);
         nfc_read_write(3, true);
         break;
       case 2:
         lcd.clear();
+        beep(50);
         nfc_read_write(4, false);
         break;
       case 3:
         lcd.clear();
+        beep(50);
         nfc_read_write(4, true);
         break;
       case 4:
             lcd.clear();
+            beep(50);
             nfc_read_write(5, false);
             break;
       case 5:
             lcd.clear();
+            beep(50);
             nfc_read_write(5, true);
+            break;
+      case 6:
+            lcd.clear();
+            beep(50);
+            about();
             break;
     }
    }
+}
+
+void                about()
+{   
+    lcd.print(F("By guigur&oborotev"));
+    lcd.setCursor(0, 1);
+    lcd.print(F("2015-2016 china"));
+    wait4button();
 }
 
 void                nfc_read_write(byte dormitory, bool mode)

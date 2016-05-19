@@ -148,8 +148,8 @@ void        balanceShow(t_nfc_handler *nfc_handler, bool mode, byte dormitory)
         lcd.print(nfc_handler->currentBalance / 100);
         Serial.println(nfc_handler->currentBalance, DEC);
         beep(50);
-        beep(50);
-        beep(50);
+         beep(50);
+          beep(50);
     }
     else if (mode && nfc_handler->success)
     {
