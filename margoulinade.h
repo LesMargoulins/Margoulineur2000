@@ -11,7 +11,7 @@
 # define OPTIMIZATION_MODE 1 // Sets the optimization, 1 to only go through the desirable blocks, 0 for all blocks
 # define POURRISSAGE 0 // Sets the writing of silly messages in some blocks of the card. It will not work with optimization on
 
-# define MENUELEMENTS 7 // Number of elements in the menu
+# define MENUELEMENTS 8 // Number of elements in the menu
 
 # define ENCODERSTEPS 4 //Steps for the rotary encoder, menu selection
 # define VALMIN 0 // Min value of the new balance in the write sequence
@@ -35,7 +35,7 @@ uint8_t buzzer = 5;
 
 uint8_t BatSense = A1;
 uint8_t BatFull = A2;
-uint8_t BatCharg = A3;-
+uint8_t BatCharg = A3;
 
 long oldPosition  = 0;
 long cursorPosition  = 0;
@@ -47,13 +47,14 @@ bool silentMode = false;
 //Menu entries
 String menuStrings[][2] =
 		{
-				{{"1. read D3"},{"read the balance of the dormitory 3"}},
-				{{"2. write D3"},{"write new balance of the dormitory 3"}},
-				{{"3. read D4"},{"read the balance of the dormitory 4"}},
-				{{"4. write D4"},{"write new balance of the dormitory 4"}},
-				{{"5. read new D4"},{"read balance new D4 cards"}},
-				{{"6. write new D4"},{"write balance new D4 cards"}},
-				{{"7. About"},{""}},
+				{{"1. Read D3"},{"read the balance of the dormitory 3"}},
+				{{"2. Write D3"},{"write new balance of the dormitory 3"}},
+				{{"3. Read D4"},{"read the balance of the dormitory 4"}},
+				{{"4. Write D4"},{"write new balance of the dormitory 4"}},
+				{{"5. Read new D4"},{"read balance new D4 cards"}},
+				{{"6. Write new D4"},{"write balance new D4 cards"}},
+        {{"7. Bat status"},{"."}},
+				{{"8. About"},{"some infos"}},
 		};
 
 typedef struct	s_nfc_handler

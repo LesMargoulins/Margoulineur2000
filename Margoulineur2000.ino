@@ -6,12 +6,25 @@
  */
 
 # include "margoulinade.h"
-
+   const int numReadings = 20;  
+  int readings[numReadings];      // the readings from the analog input
+  int readIndex = 0;              // the index of the current reading
+  int total = 0;                  // the running total
+  int average = 0;
+  
 void setup(void)
 {
+
+  for (int thisReading = 0; thisReading < numReadings; thisReading++)
+  {
+    readings[thisReading] = 0;
+  }
   pinMode(readLedPin, OUTPUT);
   pinMode(writeLedPin, OUTPUT);
-  
+
+  //  pinMode(BatSense);
+  pinMode(BatFull, INPUT_PULLUP);
+  pinMode(BatCharg, INPUT_PULLUP);
   pinMode(buzzer, OUTPUT);
 
   lcd.begin(16, 2);
@@ -87,20 +100,25 @@ void loop(void)
         nfc_read_write(4, true);
         break;
       case 4:
-            lcd.clear();
-            beep(50);
-            nfc_read_write(5, false);
-            break;
+        lcd.clear();
+        beep(50);
+        nfc_read_write(5, false);
+        break;
       case 5:
-            lcd.clear();
-            beep(50);
-            nfc_read_write(5, true);
-            break;
+        lcd.clear();
+        beep(50);
+        nfc_read_write(5, true);
+        break;
       case 6:
-            lcd.clear();
-            beep(50);
-            about();
-            break;
+        lcd.clear();
+        beep(50);
+        batStatus();
+        break;
+      case 7:
+        lcd.clear();
+        beep(50);
+        about();
+        break;
     }
    }
 }
@@ -111,6 +129,49 @@ void                about()
     lcd.setCursor(0, 1);
     lcd.print(F("2015-2016 china"));
     wait4button();
+}
+
+void                batStatus()
+{   
+    delay(250);
+    
+    while (digitalRead(encButton))
+    {
+      total = total - readings[readIndex];
+      readings[readIndex] = analogRead(A1);
+      if (readIndex >= numReadings)
+      {
+        readIndex = 0;
+      }
+      average = total / numReadings;
+      lcd.setCursor(0, 0);
+      if (digitalRead(BatFull) == 1 && digitalRead(BatCharg) == 1)
+        {
+               Serial.println(F("On battery"));
+               lcd.print(F("   On battery   "));
+        }
+      else if (digitalRead(BatFull) == 1 && digitalRead(BatCharg) == 0)
+        {
+               Serial.println(F("Charging"));
+               lcd.print(F("    Charging    "));
+        }
+      else if (digitalRead(BatFull) == 0 && digitalRead(BatCharg) == 1)
+        {
+               Serial.println(F("Battery full"));
+               lcd.print(F("  Battery full  "));
+        }
+       else
+        {
+               Serial.println(F("Error charging circuit"));
+               lcd.print(F("chrg circ. fail"));
+        }
+      lcd.setCursor(0, 1);
+      lcd.print(F("Bat Volt :"));
+      lcd.print(analogRead(A1));
+    }
+    lcd.clear();
+    beep(50);
+    delay(250);
 }
 
 void                nfc_read_write(byte dormitory, bool mode)

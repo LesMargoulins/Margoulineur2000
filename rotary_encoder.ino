@@ -55,6 +55,7 @@ int encoderWrite()
             }
         }
     }
+    beep(50);
     myEnc.write(0);
     oldPosition = -1;
     return (newPosition / ENCODERSTEPS);
@@ -66,11 +67,12 @@ void wait4button()
     digitalWrite(readLedPin, LOW);
     digitalWrite(writeLedPin, LOW);
     if (OPTIMIZATION_MODE)
-        delay(500);
+        delay(250);
     while(digitalRead(encButton))
     {
     }
-    delay(500);
+    beep(50);
+    delay(250);
     Serial.print(F("end read = "));Serial.println(oldPosition);
     lcd.clear();
 }
