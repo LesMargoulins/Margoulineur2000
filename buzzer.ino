@@ -2,8 +2,11 @@
 
 void beep(unsigned char delayms)
 {
-  analogWrite(buzzer, 100);
-  delay(delayms);
-  analogWrite(buzzer, 0);
-  delay(delayms); 
-}  
+  if(silentMode == false)
+  {
+    analogWrite(buzzer, 100);
+    delay(delayms);
+    analogWrite(buzzer, 0);
+    delay(delayms); 
+  }  
+}

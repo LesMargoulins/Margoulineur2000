@@ -25,7 +25,10 @@ void setup(void)
   nfc.begin();
 
   uint32_t versiondata = nfc.getFirmwareVersion();
-  
+
+  if (digitalRead(encButton) == LOW)
+    silentMode = true;
+    
   if (!versiondata)
   {
     beep(200);

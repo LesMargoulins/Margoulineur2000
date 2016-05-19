@@ -24,7 +24,7 @@ int encoderWrite()
 {
     int newPosition;
     myEnc.write(0);
-    Serial.print(F("jeej"));
+    Serial.print(F("Loading..."));
     lcd.print(F("Loading..."));
     delay(500);
     oldPosition = -1;

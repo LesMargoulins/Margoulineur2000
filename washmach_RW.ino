@@ -147,18 +147,26 @@ void        balanceShow(t_nfc_handler *nfc_handler, bool mode, byte dormitory)
         lcd.print(F("Balance :"));
         lcd.print(nfc_handler->currentBalance / 100);
         Serial.println(nfc_handler->currentBalance, DEC);
+        beep(50);
+        beep(50);
+        beep(50);
     }
     else if (mode && nfc_handler->success)
     {
         lcd.print(F("New balance :"));
         dormitory == 3 || 5 ? lcd.print(nfc_handler->newBalance / 100) : lcd.print("40");
         dormitory == 3 || 5 ? Serial.println(nfc_handler->newBalance, DEC) : Serial.println(40, DEC);
+        beep(50);
+        beep(50);
+        beep(50);
     }
     else
     {
         lcd.print(F("Something went"));
         lcd.setCursor(0,1);
         lcd.print(F("wrong"));
+        beep(200);
+        beep(200);
     }
     Wire.endTransmission();
 }

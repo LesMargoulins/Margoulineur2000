@@ -42,6 +42,8 @@ long cursorPosition  = 0;
 
 int cycleMenu = 0;
 
+bool silentMode = false;
+
 //Menu entries
 String menuStrings[][2] =
 		{
@@ -80,6 +82,9 @@ typedef struct	s_nfc_handler
 //Rotary encoder control functions
 void 		encoderMenu();
 int 		encoderWrite();
+
+//buzer functions
+void    beep(unsigned char delayms);
 
 //Washing machine nfc read/write functions
 void        displayKeyDebug(byte *key);
