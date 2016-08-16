@@ -29,7 +29,7 @@ soon
 
 ## Additional information
 You can find dumps of dormitories 3, 4 and new 4 [here](https://github.com/LesMargoulins/Dumps "dumps")
-If you're a member of the administration of the BJTU university and you want to take this repository down, well too bad, this is an _open source project_, and we will not remove it (except if you force us to lol). If by any chance you would want to change the scanners on the washing machines again, good luck.
+If you're a member of the administration of the BJTU university and you want to take this repository down, well too bad, this is an _open source project_, and we will not remove it under any conditions. If by any chance you would want to change the scanners on the washing machines again, we will break it again in less than a week, good luck.
 
 ## Kek
 h4x0r 1337
