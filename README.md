@@ -27,6 +27,20 @@ Parts list
 ## Diagram
 soon
 
+## Pictures
+_The cards_
+dormitory 3 & new card dormitory 4:
+
+![alt Dormitory 3 & new 4 card](https://github.com/LesMargoulins/Margoulineur2000/blob/master/imgs/dorm3F.jpg "Dormitory 3 & new 4 card")
+
+dormitory 4:
+
+![alt Old Dormitory 4 card](https://github.com/LesMargoulins/Margoulineur2000/blob/master/imgs/dorm4.jpg "Old Dormitory 4 card")
+
+The NFC card reader of the washing machine:
+
+![alt The NFC card reader of the washing machine](https://github.com/LesMargoulins/Margoulineur2000/blob/master/imgs/washingmachine.jpg "The NFC card reader of the washing machine")
+
 ## Additional information
 You can find dumps of dormitories 3, 4 and new 4 [here](https://github.com/LesMargoulins/Dumps "dumps")
 If you're a member of the administration of the BJTU university and you want to take this repository down, well too bad, this is an _open source project_, and we will not remove it under any conditions. If by any chance you would want to change the scanners on the washing machines again, we will break it again in less than a week, good luck.
