@@ -1,6 +1,7 @@
 #ifndef _MARGOULINADE_H_
 # define _MARGOULINADE_H_
 
+#include <EEPROM.h>
 # include <Wire.h>
 # include <PN532_I2C.h>
 # include <PN532.h>
@@ -25,6 +26,8 @@ PN532 nfc(pn532_i2c);
 LiquidCrystal lcd(8, 13, 12, 11, 10, 9);
 
 Encoder myEnc(2, 3);
+
+int AddrBuzzEEPROM = 0;
 
 uint8_t readLedPin = 7; //rouge
 uint8_t writeLedPin = 6; //vert
