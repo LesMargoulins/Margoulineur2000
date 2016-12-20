@@ -9,3 +9,9 @@
 
 --> make auto scroll when line is too long
 --> finish bat status algo
+
+-->add mini games
++-> a bit trip runner game (you have to jum over obstacles and collect coins)
++-> who tap it faster game
++-> gess the number
++-> stop the square at the right spot
