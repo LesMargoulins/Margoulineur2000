@@ -11,6 +11,11 @@ With just one push of a button, you can now know the balance of your card or cha
 ## Disclaimer
 It's not fair, but whatever.
 
+## Dependencies
+Arduino IDE
+PN532 lib by seeed https://github.com/Seeed-Studio/PN532
+Encoder lib by Pall Stoffregen (can be installed via Arduino library manager) http://www.pjrc.com/teensy/td_libs_Encoder.html
+
 ## Specs
 __The Margoulineur2000©__ is open source and can be used if you can think of any upgrade that could break their balls even more.
 Parts list
