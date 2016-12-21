@@ -119,6 +119,11 @@ void loop(void)
         beep(50);
         about();
         break;
+      case 8:
+        lcd.clear();
+        beep(50);
+        buzzer_eeprom();
+        break;
     }
    }
 }
@@ -129,6 +134,35 @@ void                about()
     lcd.setCursor(0, 1);
     lcd.print(F("2015-2016 china"));
     wait4button();
+}
+
+void                buzzer_eeprom()
+{
+  Serial.print("b1 eeprom : ");
+  Serial.println(EEPROM.read(eeAddress));
+    lcd.print(EEPROM.read(eeAddress));
+    lcd.setCursor(0, 1);
+    if (EEPROM.read(eeAddress) == 0)
+    {
+      lcd.print(F("DISABLE"));   
+    }
+    else
+    {
+         lcd.print(F("ENABLE"));
+    }
+    Serial.print("b2 eeprom : ");
+  Serial.println(EEPROM.read(eeAddress));
+    wait4button();
+    if (EEPROM.read(eeAddress) == 0)
+    {
+      EEPROM.put(eeAddress, 1);  
+    }
+    else
+    {
+      EEPROM.put(eeAddress, 0);
+    }
+    Serial.print("b3 eeprom : ");
+  Serial.println(EEPROM.read(eeAddress));
 }
 
 void                batStatus()
