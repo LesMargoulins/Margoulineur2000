@@ -1,6 +1,5 @@
 -->add setting menu
 +-> add the possiblity to directly add MAXVALUE w/ settings or rotate to the left the encoder
-+-> disable or enable buzzer in settings
 +-> change welcome sound w/ buzzer
 +-> ECO mode in settings
 +-> change brightness of lcd
