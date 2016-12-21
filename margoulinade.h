@@ -12,7 +12,7 @@
 # define OPTIMIZATION_MODE 1 // Sets the optimization, 1 to only go through the desirable blocks, 0 for all blocks
 # define POURRISSAGE 0 // Sets the writing of silly messages in some blocks of the card. It will not work with optimization on
 
-# define MENUELEMENTS 9 // Number of elements in the menu
+# define MENUELEMENTS 10 // Number of elements in the menu
 
 # define ENCODERSTEPS 4 //Steps for the rotary encoder, menu selection
 # define VALMIN 0 // Min value of the new balance in the write sequence
@@ -59,6 +59,7 @@ String menuStrings[][2] =
         {{"7. Bat status"},{"."}},
 				{{"8. About"},{"some infos"}},
         {{"9. Buzzer"},{"enable/disable"}},
+        {{"10. NFC Reader"},{"Works w/ libnfc"}},
 		};
 
 typedef struct	s_nfc_handler

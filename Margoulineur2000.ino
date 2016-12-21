@@ -124,6 +124,10 @@ void loop(void)
         beep(50);
         buzzer_eeprom();
         break;
+      case 9:
+        lcd.clear();
+        beep(50);
+        break;
     }
    }
 }
@@ -138,20 +142,17 @@ void                about()
 
 void                buzzer_eeprom()
 {
-  Serial.print("b1 eeprom : ");
-  Serial.println(EEPROM.read(eeAddress));
-    lcd.print(EEPROM.read(eeAddress));
+
+    lcd.print(F("Buzzer"));
     lcd.setCursor(0, 1);
     if (EEPROM.read(eeAddress) == 0)
     {
-      lcd.print(F("DISABLE"));   
+      lcd.print(F("DISABLE"));
     }
     else
     {
          lcd.print(F("ENABLE"));
     }
-    Serial.print("b2 eeprom : ");
-  Serial.println(EEPROM.read(eeAddress));
     wait4button();
     if (EEPROM.read(eeAddress) == 0)
     {
@@ -160,9 +161,8 @@ void                buzzer_eeprom()
     else
     {
       EEPROM.put(eeAddress, 0);
+      silentMode = false;
     }
-    Serial.print("b3 eeprom : ");
-  Serial.println(EEPROM.read(eeAddress));
 }
 
 void                batStatus()
