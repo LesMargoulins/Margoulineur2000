@@ -27,6 +27,9 @@ void setup(void)
   pinMode(BatCharg, INPUT_PULLUP);
   pinMode(buzzer, OUTPUT);
 
+  digitalWrite(BatFull, INPUT_PULLUP);
+  digitalWrite(BatCharg, INPUT_PULLUP);
+  
   lcd.begin(16, 2);
 
   pinMode(encButton, INPUT_PULLUP);
@@ -64,6 +67,7 @@ void setup(void)
   lcd.print(F("NFC OK"));
   delay(1000);
   lcd.clear();
+  checkPassword();
 }
 
 void loop(void)
@@ -128,84 +132,12 @@ void loop(void)
         lcd.clear();
         beep(50);
         break;
+      case 10:
+        lcd.clear();
+        beep(50);
+        break;
     }
    }
-}
-
-void                about()
-{   
-    lcd.print(F("By guigur&oborotev"));
-    lcd.setCursor(0, 1);
-    lcd.print(F("2015-2016 china"));
-    wait4button();
-}
-
-void                buzzer_eeprom()
-{
-
-    lcd.print(F("Buzzer"));
-    lcd.setCursor(0, 1);
-    if (EEPROM.read(eeAddress) == 0)
-    {
-      lcd.print(F("DISABLE"));
-    }
-    else
-    {
-         lcd.print(F("ENABLE"));
-    }
-    wait4button();
-    if (EEPROM.read(eeAddress) == 0)
-    {
-      EEPROM.put(eeAddress, 1);  
-    }
-    else
-    {
-      EEPROM.put(eeAddress, 0);
-      silentMode = false;
-    }
-}
-
-void                batStatus()
-{   
-    delay(250);
-    
-    while (digitalRead(encButton))
-    {
-      total = total - readings[readIndex];
-      readings[readIndex] = analogRead(A1);
-      if (readIndex >= numReadings)
-      {
-        readIndex = 0;
-      }
-      average = total / numReadings;
-      lcd.setCursor(0, 0);
-      if (digitalRead(BatFull) == 1 && digitalRead(BatCharg) == 1)
-        {
-               Serial.println(F("On battery"));
-               lcd.print(F("   On battery   "));
-        }
-      else if (digitalRead(BatFull) == 1 && digitalRead(BatCharg) == 0)
-        {
-               Serial.println(F("Charging"));
-               lcd.print(F("    Charging    "));
-        }
-      else if (digitalRead(BatFull) == 0 && digitalRead(BatCharg) == 1)
-        {
-               Serial.println(F("Battery full"));
-               lcd.print(F("  Battery full  "));
-        }
-       else
-        {
-               Serial.println(F("Error charging circuit"));
-               lcd.print(F("chrg circ. fail"));
-        }
-      lcd.setCursor(0, 1);
-      lcd.print(F("Bat Volt :"));
-      lcd.print(analogRead(A1));
-    }
-    lcd.clear();
-    beep(50);
-    delay(250);
 }
 
 void                nfc_read_write(byte dormitory, bool mode)
@@ -260,3 +192,10 @@ void                nfc_read_write(byte dormitory, bool mode)
   wait4button();
   Serial.flush();
 }
+
+void    checkPassword()
+{
+  lcd.print(EEPROM.read(1));
+  wait4button();
+}
+

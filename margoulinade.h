@@ -12,7 +12,7 @@
 # define OPTIMIZATION_MODE 1 // Sets the optimization, 1 to only go through the desirable blocks, 0 for all blocks
 # define POURRISSAGE 0 // Sets the writing of silly messages in some blocks of the card. It will not work with optimization on
 
-# define MENUELEMENTS 10 // Number of elements in the menu
+# define MENUELEMENTS 11 // Number of elements in the menu
 
 # define ENCODERSTEPS 4 //Steps for the rotary encoder, menu selection
 # define VALMIN 0 // Min value of the new balance in the write sequence
@@ -59,7 +59,8 @@ String menuStrings[][2] =
         {{"7. Bat status"},{"."}},
 				{{"8. About"},{"some infos"}},
         {{"9. Buzzer"},{"enable/disable"}},
-        {{"10. NFC Reader"},{"Works w/ libnfc"}},
+        {{"10. Password"},{"enable/disable"}},
+        {{"11. NFC Reader"},{"Works w/ libnfc"}},
 		};
 
 typedef struct	s_nfc_handler
@@ -79,7 +80,7 @@ typedef struct	s_nfc_handler
 	byte 		KeyA_D3_part2[6] = {0xa9, 0x6c, 0xde, 0x3f, 0x27, 0x86}; // Key to authenticate sectors 5 and 6, dorm 3
 	byte 		KeyA_new_D4_part1[6] = {0xa9, 0x6c, 0xde, 0x3f, 0x27, 0x86}; // Key to authenticate D4 cards type 2, first part
 	byte 		KeyA_new_D4_part2[6] = {0xa0, 0x10, 0xbc, 0xde, 0x01, 0x01}; // Key to authenticate D4 cards type 2, second part
-  	byte    KeyA_Blank[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff}; //blank key
+  byte    KeyA_Blank[6] = {0xff, 0xff, 0xff, 0xff, 0xff, 0xff}; //blank key
 	byte 		KeyA_D4[6]; // Key used to authenticate sectors of dorm 4
 }				t_nfc_handler;
 
@@ -88,21 +89,27 @@ typedef struct	s_nfc_handler
 //Rotary encoder control functions
 void 		encoderMenu();
 int 		encoderWrite();
+void    wait4button();
 
-//buzer functions
+// buzer functions
 void    beep(unsigned char delayms);
+
+// feature functions
+void        about();
+void        buzzer_eeprom();
+void        batStatus();
 
 //Washing machine nfc read/write functions
 void        displayKeyDebug(byte *key);
 void        writeModeInitialization(t_nfc_handler *handler, byte dormitory);
 void        calcOldD4cardKeyA(t_nfc_handler *nfc_handler);
-bool		guessNewD4Keys(t_nfc_handler *nfc_handler, byte *dormitory);
-void 		dormitory3Authentication(t_nfc_handler *nfc_handler);
+bool		    guessNewD4Keys(t_nfc_handler *nfc_handler, byte *dormitory);
+void 		    dormitory3Authentication(t_nfc_handler *nfc_handler);
 void        dormitory4newCardsAuthentication(t_nfc_handler *nfc_handler);
 void        balanceReadOnly(t_nfc_handler *nfc_handler, byte dormitory);
 void        balanceShow(t_nfc_handler *nfc_handler, bool mode, byte dormitory);
 void        newBalanceWrite(t_nfc_handler *nfc_handler);
-void 		oldDormitory4WriteBalance(t_nfc_handler *nfc_handler);
+void 		    oldDormitory4WriteBalance(t_nfc_handler *nfc_handler);
 void        sectorsParsing(t_nfc_handler *nfc_handler, bool mode, byte dormitory);
 
 # endif /* !_MARGOULINADE_H_ */
