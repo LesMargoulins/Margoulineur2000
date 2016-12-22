@@ -67,7 +67,9 @@ void setup(void)
   lcd.print(F("NFC OK"));
   delay(1000);
   lcd.clear();
+  checkMem();
   checkPassword();
+  //eepromDebug();
 }
 
 void loop(void)
@@ -192,10 +194,3 @@ void                nfc_read_write(byte dormitory, bool mode)
   wait4button();
   Serial.flush();
 }
-
-void    checkPassword()
-{
-  lcd.print(EEPROM.read(1));
-  wait4button();
-}
-

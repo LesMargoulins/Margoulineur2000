@@ -2,7 +2,7 @@
 
 void beep(unsigned char delayms)
 {
-  if(silentMode == false && EEPROM.read(eeAddress) == 0)
+  if(silentMode == false && EEPROM.read(3) == 0)
   {
     analogWrite(buzzer, 100);
     delay(delayms);

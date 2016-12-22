@@ -95,6 +95,9 @@ void    wait4button();
 void    beep(unsigned char delayms);
 
 // feature functions
+void        checkMem();
+void        eepromDebug();
+void        checkPassword();
 void        about();
 void        buzzer_eeprom();
 void        batStatus();
