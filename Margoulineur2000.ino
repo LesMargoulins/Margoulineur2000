@@ -70,6 +70,7 @@ void setup(void)
   checkMem();
   checkPassword();
   //eepromDebug();
+  menu_select();
 }
 
 void loop(void)

@@ -102,6 +102,10 @@ void        about();
 void        buzzer_eeprom();
 void        batStatus();
 
+//gess the number
+void    menu_select();
+void    gess_the_number();
+
 //Washing machine nfc read/write functions
 void        displayKeyDebug(byte *key);
 void        writeModeInitialization(t_nfc_handler *handler, byte dormitory);

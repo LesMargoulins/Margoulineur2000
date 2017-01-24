@@ -24,6 +24,7 @@ void    eepromDebug()
 {
   int value;
   int address;
+  
   while(wait4button)
   {
     value = EEPROM.read(address);
