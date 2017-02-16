@@ -14,6 +14,9 @@
 
 # define MENUELEMENTS 11 // Number of elements in the menu
 
+# define PASSWDELEMENTS 16 //Possible chars in the passwd
+# define PASSWDLENGHT 5
+
 # define ENCODERSTEPS 4 //Steps for the rotary encoder, menu selection
 # define VALMIN 0 // Min value of the new balance in the write sequence
 # define VALMAX 50 // Max value of the new balance in the write sequence
@@ -62,6 +65,11 @@ String menuStrings[][2] =
         {{"10. Password"},{"enable/disable"}},
         {{"11. NFC Reader"},{"Works w/ libnfc"}},
 		};
+
+char passwdChars[16] =
+{'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+
+char* password = "1010C";
 
 typedef struct	s_nfc_handler
 {

@@ -41,13 +41,78 @@ void    eepromDebug()
   wait4button();
 }
 
+void    selectMenu()
+{
+
+}
+
 void    checkPassword()
 {
-  if (EEPROM.read(1) == 1)
+  int i = 0;
+  char storedpasswd[PASSWDLENGHT + 2] = "";
+  Serial.print(PASSWDLENGHT);
+  if (true || EEPROM.read(1) == 1)
   {
-    lcd.print(F("checking the passwd"));
-    wait4button();
+    lcd.print(F("Enter passwd"));
+    lcd.setCursor(0, 1);
+    while(i < PASSWDLENGHT)
+    {
+      while(digitalRead(encButton))
+      {
+          int newPosition = myEnc.read();
+          if ((newPosition != oldPosition) )
+          {
+            oldPosition = newPosition;
+            if(oldPosition > (PASSWDELEMENTS * ENCODERSTEPS) - 1)
+            {
+               myEnc.write(0);
+            } 
+            else if(oldPosition < 0)
+            {
+               myEnc.write(PASSWDELEMENTS * ENCODERSTEPS - 1);
+            }
+            Serial.println(newPosition / ENCODERSTEPS);
+            cycleMenu = (abs(newPosition) / ENCODERSTEPS) / MENUELEMENTS;
+            lcd.clear();
+          }
+          lcd.setCursor(0, 1);
+          lcd.print(storedpasswd);
+          lcd.setCursor(i, 1);
+          lcd.print(passwdChars[newPosition / ENCODERSTEPS]);
+          storedpasswd[i] = passwdChars[newPosition / ENCODERSTEPS];
+      }
+          beep(50);
+          delay(200);
+        i++;
+    }
+    verifPasswd(storedpasswd);
   }
+}
+
+int                 verifPasswd(char storedpasswd[PASSWDLENGHT + 2])
+{
+  Serial.print(storedpasswd);
+  lcd.clear();
+  Serial.print(">");
+  Serial.print(storedpasswd);
+  Serial.print("<>");
+  Serial.print(password);
+  Serial.print("<");
+  if (strcmp(storedpasswd, password) == 0)
+  {
+     Serial.println(F("\n\nDONE ! passwd is ok"));
+     beep(50);
+     beep(50);
+     beep(50);
+  }
+  else
+  {
+    Serial.println(F("\n\Wrong passwd"));
+     beep(200);
+     beep(200);
+     checkPassword();
+  }
+  delay(250);
 }
 
 void                about()
@@ -729,284 +794,5 @@ void midi() {
     delay(5.78703125);
     tone(tonePin, 184, 119.791546875);
     delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 184, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 207, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 233, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 207, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 184, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 207, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 184, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 155, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 155, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 155, 119.791546875);
-    delay(133.10171875);
-    delay(144.67578125);
-    tone(tonePin, 138, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 233, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 277, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 311, 244.791421875);
-    delay(271.99046875);
-    delay(144.67578125);
-    tone(tonePin, 138, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 233, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 184, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 184, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 184, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 184, 244.791421875);
-    delay(271.99046875);
-    delay(144.67578125);
-    tone(tonePin, 138, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 184, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 207, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 233, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 277, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 246, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 233, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 207, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 233, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 207, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 155, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 155, 244.791421875);
-    delay(271.99046875);
-    delay(144.67578125);
-    tone(tonePin, 138, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 311, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 277, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 277, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 277, 119.791546875);
-    delay(133.10171875);
-    delay(283.56453125);
-    tone(tonePin, 233, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 184, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 184, 244.791421875);
-    delay(271.99046875);
-    delay(422.45328125);
-    tone(tonePin, 184, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 184, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 184, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 207, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 233, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 184, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 184, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 207, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 233, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 184, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 155, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 155, 416.66625);
-    delay(462.9625);
-    delay(648.1475);
-    tone(tonePin, 233, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 184, 494.791171875);
-    delay(549.76796875);
-    delay(5.78703125);
-    tone(tonePin, 184, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 155, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 184, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 184, 244.791421875);
-    delay(271.99046875);
-    delay(283.56453125);
-    tone(tonePin, 184, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 155, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 184, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 184, 244.791421875);
-    delay(271.99046875);
-    delay(283.56453125);
-    tone(tonePin, 184, 244.791421875);
-    delay(271.99046875);
-    delay(283.56453125);
-    tone(tonePin, 233, 666.666);
-    delay(740.74);
-    delay(92.5925);
-    tone(tonePin, 233, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 184, 494.791171875);
-    delay(549.76796875);
-    delay(5.78703125);
-    tone(tonePin, 184, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 155, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 184, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 184, 244.791421875);
-    delay(271.99046875);
-    delay(283.56453125);
-    tone(tonePin, 184, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 155, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 184, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 184, 244.791421875);
-    delay(271.99046875);
-    delay(283.56453125);
-    tone(tonePin, 184, 244.791421875);
-    delay(271.99046875);
-    delay(283.56453125);
-    tone(tonePin, 233, 666.666);
-    delay(740.74);
-    delay(92.5925);
-    tone(tonePin, 233, 416.66625);
-    delay(462.9625);
-    delay(92.5925);
-    tone(tonePin, 277, 369.791296875);
-    delay(410.87921875);
-    delay(5.78703125);
-    tone(tonePin, 277, 119.791546875);
-    delay(133.10171875);
-    delay(5.78703125);
-    tone(tonePin, 246, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 233, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 207, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 207, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 184, 869.790796875);
-    delay(966.43421875);
-    delay(144.67578125);
-    tone(tonePin, 184, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 184, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 207, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 184, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 233, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 207, 666.666);
-    delay(740.74);
-    delay(92.5925);
-    tone(tonePin, 207, 244.791421875);
-    delay(271.99046875);
-    delay(5.78703125);
-    tone(tonePin, 184, 494.791171875);
-    delay(549.76796875);
-    delay(5.78703125);
-    tone(tonePin, 207, 244.791421875);
-    delay(271.99046875);
     delay(5.78703125);
 }

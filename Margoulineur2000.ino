@@ -6,7 +6,8 @@
  */
 
 # include "margoulinade.h"
-   const int numReadings = 20;  
+
+  const int numReadings = 20;  
   int readings[numReadings];      // the readings from the analog input
   int readIndex = 0;              // the index of the current reading
   int total = 0;                  // the running total
@@ -14,7 +15,6 @@
   
 void setup(void)
 {
-
   for (int thisReading = 0; thisReading < numReadings; thisReading++)
   {
     readings[thisReading] = 0;
