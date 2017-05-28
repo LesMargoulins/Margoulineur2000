@@ -1,4 +1,8 @@
-# include "margoulinade.h"
+/*
+ * GUIGUR 2015 - 2017
+ */
+ 
+ # include "margoulinade.h"
 
 void            displayKeyDebug(byte *key)
 {

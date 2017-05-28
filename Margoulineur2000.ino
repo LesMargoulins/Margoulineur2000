@@ -2,7 +2,7 @@
  * This is a free software developed by guigur aka jean margouin
  * 
  * I would not be in charge of your use of this software
- *  (c) guigur.com 2015
+ *  (c) guigur.com 2015 - 2017
  */
 
 # include "margoulinade.h"
@@ -133,8 +133,14 @@ void loop(void)
       case 9:
         lcd.clear();
         beep(50);
+        buzzer_level_eeprom();
         break;
       case 10:
+        lcd.clear();
+        beep(50);
+        password_enable_disble_eeprom();
+        break;
+      case 11:
         lcd.clear();
         beep(50);
         break;

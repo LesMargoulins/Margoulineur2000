@@ -1,3 +1,7 @@
+/*
+ * GUIGUR 2015 - 2017
+ */
+ 
 #ifndef _MARGOULINADE_H_
 # define _MARGOULINADE_H_
 
@@ -62,8 +66,9 @@ String menuStrings[][2] =
         {{"7. Bat status"},{"."}},
 				{{"8. About"},{"some infos"}},
         {{"9. Buzzer"},{"enable/disable"}},
-        {{"10. Password"},{"enable/disable"}},
-        {{"11. NFC Reader"},{"Works w/ libnfc"}},
+        {{"10. Buzzer level"},{"sweet feature"}},
+        {{"11. Password"},{"enable/disable"}},
+        {{"12. NFC Reader"},{"Works w/ libnfc"}},
 		};
 
 char passwdChars[16] =
@@ -106,6 +111,9 @@ void    beep(unsigned char delayms);
 void        checkMem();
 void        eepromDebug();
 void        checkPassword();
+void        verifPassword();
+void        password_enable_disble_eeprom();
+void        buzzer_level_eeprom();
 void        about();
 void        buzzer_eeprom();
 void        batStatus();
