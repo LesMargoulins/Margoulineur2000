@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<WORKSPACE>
+ <FRAME activewindow="0">
+  <PLACEMENT>2c0000000000000001000000ffffffffffffffffffffffffffffffff97000000b2000000b4060000a1040000</PLACEMENT>
+  <WINDOW type="default" module="ISIS"/>
+  <WINDOW type="default" module="ARES"/>
+  <WINDOW type="default" module="VSMSTUDIO">
+   <STATE NAME="EDIT" VALUE="AAAA/wAAAAH9AAAAAgAAAAAAAAEAAAADHfwCAAAAAfsAAAAQAFAAcgBvAGoAZQBjAHQAcwEAAAAAAAADHQAAASwA////AAAAAwAABgUAAABm/AEAAAAB+wAAACAATwB1AHQAcAB1AHQARABvAGMAawBXAGkAZABnAGUAdAEAAAAAAAAGBQAAAFAA////AAAFAQAAAx0AAAABAAAAAgAAAAgAAAAC/AAAAAA="/>
+   <PROJECT ACTIVE="TRUE" NAME="ATMEGA328P" CONFIGURATION="Debug"/>
+  </WINDOW>
+  <WINDOW type="default" module="PROJNOTES"/>
+  <WINDOW type="VIEW3D" module="VIEW3D">
+   <camera>
+    <position x="3845000" y="-6356400" z="4844400"/>
+    <focus x="3845000" y="-1512000" z="0"/>
+    <up x="0" y="707106" z="707106"/>
+   </camera>
+  </WINDOW>
+ </FRAME>
+ <MODULE name="VSMDEBUG">
+  <PWI/>
+ </MODULE>
+</WORKSPACE>
