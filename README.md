@@ -1,5 +1,5 @@
 # Margoulineur2000
-![alt a beautiful washing machine](http://i.telegraph.co.uk/multimedia/archive/01697/p_washing-machine_1697696c.jpg "a beautiful washing machine")
+![alt a beautiful washing machine](imgs/beautiful_wm.jpeg "a beautiful washing machine")
 ## Description
 __The Margoulineur2000©__ is a device that can tell you the balance of your washing machine card and overwrite it.
 It is a very useful utility for smelly students.
@@ -36,15 +36,15 @@ soon
 _The cards_
 dormitory 3 & new card dormitory 4:
 
-![alt Dormitory 3 & new 4 card](https://github.com/LesMargoulins/Margoulineur2000/blob/master/imgs/dorm3F.jpg "Dormitory 3 & new 4 card")
+![alt Dormitory 3 & new 4 card](imgs/dorm3F.jpg "Dormitory 3 & new 4 card")
 
 dormitory 4:
 
-![alt Old Dormitory 4 card](https://github.com/LesMargoulins/Margoulineur2000/blob/master/imgs/dorm4.jpg "Old Dormitory 4 card")
+![alt Old Dormitory 4 card](imgs/dorm4.jpg "Old Dormitory 4 card")
 
 The NFC card reader of the washing machine:
 
-![alt The NFC card reader of the washing machine](https://github.com/LesMargoulins/Margoulineur2000/blob/master/imgs/washingmachine.jpg "The NFC card reader of the washing machine")
+![alt The NFC card reader of the washing machine](imgs/washingmachine.jpg "The NFC card reader of the washing machine")
 
 ## Additional information
 You can find dumps of dormitories 3, 4 and new 4 [here](https://github.com/LesMargoulins/Dumps "dumps")
